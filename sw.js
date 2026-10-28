@@ -1,6 +1,6 @@
 // Lunacy Depths offline support.
 // Bump VERSION whenever you upload a new index.html so players get the update.
-const VERSION = 'lunacy-1.16.1';
+const VERSION = 'lunacy-1.17';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -12,6 +12,8 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  // Online data (leaderboards, clans, friends) must always be fresh: never cache it.
+  if (new URL(req.url).pathname.startsWith('/api/') || req.url.includes('workers.dev')) return;
   // The game page: try the network first so updates arrive, fall back to the saved copy offline.
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(VERSION).then(c => c.put('index.html', copy)); return r; })
