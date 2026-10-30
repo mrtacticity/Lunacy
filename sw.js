@@ -1,10 +1,10 @@
 // Lunacy Depths offline support.
 // Bump VERSION whenever you upload a new index.html so players get the update.
-const VERSION = 'lunacy-1.22.4';
+const VERSION = 'lunacy-1.22.6';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL.map(u => new Request(u, {cache: 'reload'})))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
@@ -16,7 +16,7 @@ self.addEventListener('fetch', e => {
   if (new URL(req.url).pathname.startsWith('/api/') || req.url.includes('workers.dev')) return;
   // The game page: try the network first so updates arrive, fall back to the saved copy offline.
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(VERSION).then(c => c.put('index.html', copy)); return r; })
+    e.respondWith(fetch(req.url, {cache: 'no-store'}).then(r => { const copy = r.clone(); caches.open(VERSION).then(c => c.put('index.html', copy)); return r; })
       .catch(() => caches.match('index.html')));
     return;
   }
