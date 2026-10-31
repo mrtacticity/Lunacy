@@ -2,6 +2,15 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.25 | Accounts and big screens | Oct 31, 2026
+- Playing on a computer? The game now fills your whole screen: a big battle view with your hero stats and recent loot on the side, and menus open as a window over the fight. Click outside a window or press Esc to close it. Phones look the same as before
+- Your hero now has an Account code (Settings → Your account). Use it to sign in on any phone or computer, no Discord needed
+- Sign in with Google: link your Google account and use it to get your hero back on any device
+- Sign in with Discord now links your hero the first time you use it, so it always works
+- When two devices have different heroes, the game asks which one to keep instead of replacing anything
+- An older device can no longer overwrite newer progress from another device. You'll be asked which to keep
+- The game has moved to lunacydepths.com. Opening the old address brings your hero over automatically
+
 ## v1.24 | The Raid Update | Oct 31, 2026
 - Raids are rebuilt from the ground up! Every raid is now a walkable boss arena: watch for red warning zones and walk out of them before they land. Auto-hunt still attacks, but it will not dodge for you
 - Each raid has three phases with new mechanics: shields you break by killing adds, homing orbs, sweeping beams, lava lines, rising tides and arrow rain you can only survive behind a pillar

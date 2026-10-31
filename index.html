@@ -48,6 +48,18 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
+
+
+<title>Lunacy Depths</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
+
+
+<title>Lunacy Depths</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
 <style>
 /* Layout: one-screen phone game. Top bar, battle stage canvas, scrolling tab panel, bottom nav. Deliberately dark-only (night dungeon). */
 :root{
@@ -324,6 +336,26 @@ input[type=text],input[type=number],input[type=password],select{background:var(-
 .banner small{display:block;font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:.08em;margin-top:4px;color:var(--ink)}
 @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.85)}10%{opacity:1;transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.toast,.banner{animation:none}}
+
+#side{display:none}
+/* ===== computer screens: one big battle screen, menus open as a window over it ===== */
+@media (min-width:1024px){
+ #app{max-width:none}
+ #panel{inset:24px max(40px,calc((100% - 1100px)/2)) 18px;border:1px solid var(--line);border-radius:18px;box-shadow:0 0 0 100vmax #000a,0 24px 60px #000c;z-index:20;padding:0 28px 28px;gap:16px}
+ #mini{top:0;margin:0 -28px;width:calc(100% + 56px);border-radius:18px 18px 0 0;border-width:0 0 1px;padding:14px 28px}
+ nav#nav{position:relative;z-index:21;width:min(980px,100%);margin:0 auto;border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0}
+ #actions{left:50%;right:auto;width:min(700px,56%);transform:translateX(-50%);border-radius:14px 14px 0 0}
+ #belt,#coach{left:50%;right:auto;width:min(660px,56%);transform:translateX(-50%)}
+ #side{display:flex;position:absolute;right:16px;top:232px;bottom:96px;width:260px;flex-direction:column;gap:10px;z-index:4;pointer-events:none;overflow:hidden}
+ .sbox{background:#0b0e1ae0;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12.5px;backdrop-filter:blur(6px)}
+ .sbox .eyebrow{margin-bottom:6px}
+ .srow{display:flex;justify-content:space-between;gap:8px;padding:2px 0}.srow b{font-variant-numeric:tabular-nums}
+ .sbar{height:7px;border-radius:4px;background:#22283c;overflow:hidden;margin:4px 0 6px}.sbar i{display:block;height:100%;background:#5fc77a}
+ .sloot{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 0;font-weight:700}
+ #modal{align-items:center}
+ .sheet{max-width:680px;border-radius:16px;border-bottom:1px solid var(--line);max-height:90%}
+ .sheet.full{max-width:1000px;height:94%;border-radius:16px;border:1px solid var(--line)}
+}
 </style>
 
 <div id="app">
@@ -342,6 +374,7 @@ input[type=text],input[type=number],input[type=password],select{background:var(-
   <div id="stage"><canvas id="cv" aria-label="Battle. Tap to strike."></canvas>
     <div id="hud"><div class="hz"><div class="eyebrow" id="hZoneN"></div><div id="hZone" data-act="floorpick" role="button" tabindex="0" title="Choose a floor to farm" style="cursor:pointer"></div><div id="hNext"></div><div id="hPips"></div><div id="hHp" hidden><i id="hHpF"></i><span id="hHpT"></span></div><div id="hGath"></div><button id="hGoal" data-act="goal"></button></div>
       <div style="display:flex;flex-direction:column;align-items:flex-end"><div id="hFloor"></div><button id="hPush" data-act="push"></button><button id="hRaid" data-act="raidinfo" hidden></button><button id="hAuto" data-act="autohunt"></button></div></div>
+    <div id="side" aria-hidden="true"><div class="sbox" id="sHero"></div><div class="sbox" id="sLoot"></div></div>
     <div id="coach" hidden></div>
     <div id="belt"><div id="beltP"></div><div id="beltS"></div></div>
     <div id="actions">
@@ -637,6 +670,7 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.25','Oct 31, 2026','Accounts and big screens',["Playing on a computer? The game now fills your whole screen: a big battle view with your hero stats and recent loot on the side, and menus open as a window over the fight. Click outside a window or press Esc to close it. Phones look the same as before", "Your hero now has an Account code (Settings → Your account). Use it to sign in on any phone or computer, no Discord needed", "Sign in with Google: link your Google account and use it to get your hero back on any device", "Sign in with Discord now links your hero the first time you use it, so it always works", "When two devices have different heroes, the game asks which one to keep instead of replacing anything", "An older device can no longer overwrite newer progress from another device. You'll be asked which to keep", "The game has moved to lunacydepths.com. Opening the old address brings your hero over automatically"]],
  ['1.24','Oct 31, 2026','The Raid Update',["Raids are rebuilt from the ground up! Every raid is now a walkable boss arena: watch for red warning zones and walk out of them before they land. Auto-hunt still attacks, but it will not dodge for you", "Each raid has three phases with new mechanics: shields you break by killing adds, homing orbs, sweeping beams, lava lines, rising tides and arrow rain you can only survive behind a pillar", "New: The Gilded Gallery (unlocks at floor 250). Vaelith, the Gilded Huntress keeps her distance and rains arrows. Drops the Huntress set, Vaelith's Longbow, the Gilded Arbalest and the Gilded Pup pet", "New: Sanctum of the Hollow Star (floor 400). Astraeus teleports, fires chasing star orbs and sweeping beams. Drops the Starweaver set, the Staff of Astraeus, the Shard of the Star wand and the Starling pet", "New: The Abyssal Maw (floor 600). Cut its three glowing tentacles to open its mouth, then strike while it is exposed. Drops the Abyssal set, the Trident of the Maw, the Reaper of the Deep and the Lil' Maw pet", "The Hollow Court and Throne of Ash are reworked into the new arena style", "Raids are graded S to D on speed and hits taken. Better grades raise your unique drop chance (S is ×1.6)", "One Second Wind per raid: the first time you fall, you get back up with half your health", "Ranged and magic players finally have their own raid weapons, with brand new artwork", "Raid clears on leaderboards and profiles now count all five raids", "New website pages: a privacy policy and how to delete your account", "You can now delete your online account in Settings → Online", "Discord: the role buttons in #get-roles work again, and the new /lunacy command opens a menu with leaderboards, your hero, clans and game stats"]],
  ['1.23','Oct 30, 2026','Fair views, floor picker and Cursed Descent',["Fixed: swords, spears, maces and scythes had a gap where the handle should be (most visible in the bag and trophy room). Every weapon is one piece again", "Classic and Explore views are now balanced: Classic adds a short walk between fights to match Explore, so neither view pushes faster", "Choose a floor: tap the dungeon name on the battle screen to jump back to any floor you have reached and farm it", "New: Cursed Descent. Stake 20% of your gold and push 10 floors under a curse (Shadowed, Blighted or Damned). Tougher monsters, much better loot, and clearing all 10 floors multiplies your stake and gives boss chests. Die and the stake is lost. Find it in the floor menu", "If you die on a floor that is far too strong for you, you now fall back to a floor you can actually farm, and the message tells you to get stronger first", "Rankings on player profiles now load properly", "Rare drops and new pets are announced in the Discord drops channel (once the team turns it on)", "Gifts from the Lunacy team now arrive in game with a message"]],
  ['1.22.6','Oct 29, 2026','Pet artwork',["Every pet has its own hand-painted artwork! All 29 pets now appear as real creatures instead of glowing orbs", "Your follower walks beside you in the dungeon, turns with you, and floats if it's a wisp, moon or star. Elder and Ascended pets glow brighter", "The Pets tab and collection show each pet's artwork. Pets you haven't found yet show as dark silhouettes", "The app and website now always load the newest version when you open them", "The welcome screen now mentions all 14 dungeons and 700 floors"]],
@@ -842,7 +876,7 @@ function tutTick(){
   if(!st.last&&st.done(S.tutB)){S.tut++;tutBase();sfx('coin');return tutTick()}
   el.hidden=tab!=='dungeon'&&!st.sel?.startsWith('[data-tab');
   if(tab!=='dungeon'&&st.sel&&st.sel.startsWith('[data-tab'))el.hidden=true;
-  if(tab==='dungeon')el.hidden=false;
+  if(tab==='dungeon'||wide())el.hidden=false;
   const html=`<div class="ct"><b>${S.tut+1}/${TUT.length}</b> ${esc(st.tx&&EX.on()?st.tx:st.t)}</div><div class="cb">${st.last?'<button class="btn sm pri" data-act="tutdone">Let\'s go</button>':''}<button class="btn sm" data-act="tutskip">${st.last?'':'Skip tutorial'}</button></div>`;
   const tk=S.tut+(EX.on()?'e':'c');if(el.dataset.k!==tk){el.innerHTML=html;el.dataset.k=tk;document.querySelectorAll('.tpulse').forEach(e=>e.classList.remove('tpulse'));if(st.sel&&st.sel!=='#stage'){const t=document.querySelector(st.sel);if(t)t.classList.add('tpulse')}}
 }
@@ -2938,7 +2972,7 @@ function step(dt){
   if(RA){if(!grid)raidBegin(RA.R)}else if(!grid||key!==keyNow()&&!portal)gen();
   const h=hero,t=B.t;if(B.dead>0){B.dead-=dt;if(B.dead<=0)B.dead=0;return}
   if(RA&&raidStep(dt))return;
-  if(!hintShown&&tab==='dungeon'&&(S.tut==null||S.tut>=TUT.length)){hintShown=true;try{if(!localStorage.getItem('ld_ex_hint')){localStorage.setItem('ld_ex_hint','1');setTimeout(()=>toast('Drag on the left to walk. Auto-hunt hunts for you.'),1200)}}catch(e){}}
+  if(!hintShown&&(tab==='dungeon'||wide())&&(S.tut==null||S.tut>=TUT.length)){hintShown=true;try{if(!localStorage.getItem('ld_ex_hint')){localStorage.setItem('ld_ex_hint','1');setTimeout(()=>toast(matchMedia('(pointer:fine)').matches?'Walk with WASD or the arrow keys. Q special, Space block, E flask. Auto-hunt hunts for you.':'Drag on the left to walk. Auto-hunt hunts for you.'),1200)}}catch(e){}}
   if(h.lunge>0)h.lunge-=dt;
   if(h.atk){const k0=h.atk.t/h.atk.dur;h.atk.t+=dt;const k1=h.atk.t/h.atk.dur;if(!h.atk.done&&k0<0.55&&k1>=0.55){h.atk.done=true;resolveHit()}if(k1>=1)h.atk=null}
   let mx=joy.x+((keys.d||keys.arrowright)?1:0)-((keys.a||keys.arrowleft)?1:0),my=joy.y+((keys.s||keys.arrowdown)?1:0)-((keys.w||keys.arrowup)?1:0);
@@ -3336,12 +3370,25 @@ return {url}})();
 /* ================= ONLINE (accounts, cloud saves, live ranks, clans, friends, Discord) ================= */
 // Paste your Worker address here once it's deployed, e.g. 'https://lunacy-online.yourname.workers.dev'. Empty = offline mode.
 const ONLINE_URL='https://lunacy-online.jameskscoggins50.workers.dev';
+// The game lives at lunacydepths.com now. The old GitHub address carries each player's hero over.
+const NEW_HOME='https://lunacydepths.com/';
+function movedAway(){if(!/github\.io$/.test(location.hostname))return false;
+  openModal(`<div class="shead"><h2>We've moved!</h2></div><div class="muted" style="font-size:14px">Lunacy Depths now lives at <b>lunacydepths.com</b>. Your hero comes with you. Moving you now…</div><div class="muted" style="font-size:12px">On a phone with the game on your home screen, add the new site to your home screen too.</div><button class="btn pri" data-act="gonew">Take me there</button>`);
+  setTimeout(goNew,2500);return true}
+async function goNew(){if(goNew.busy)return;goNew.busy=1;let tok=null;try{tok=JSON.parse(localStorage.getItem('ld_net')||'null')}catch(e){}
+  try{if(tok&&tok.token&&NET.on()){await NET.sync(true);location.href=NEW_HOME+'#ldauth='+tok.token;return}}catch(e){}
+  try{location.href=NEW_HOME+'#ldsave='+encodeURIComponent(saveCode())}catch(e){location.href=NEW_HOME}}
+// a hero carried over in the link from the old site (players who were offline)
+function takeSaveFromLink(){const m=(location.hash||'').match(/ldsave=([^&]+)/);if(!m)return;history.replaceState(null,'',location.pathname+location.search);
+  let s=null;try{s=readCode(decodeURIComponent(m[1]))}catch(e){toast('Could not bring your hero over. Use a backup code instead.');return}
+  if((S.playSec||0)<600||(s.playSec||0)>=(S.playSec||0)){S=migrate(s);calc();B.php=C.maxHp;save();buildNav();show('dungeon');updateTop();banner('WELCOME TO THE NEW HOME',`Floor ${S.floor} · ${S.name}`,'#6fd08c')}
+  else toast('This device already has more progress than the old site.')}
 const NET=(()=>{
   const base=()=>String(window.LD_ONLINE||ONLINE_URL||'').replace(/\/+$/,'');
   const on=()=>!!base()&&!(typeof S!=='undefined'&&S&&S.netOff);
   let acct=null;try{acct=JSON.parse(localStorage.getItem('ld_net')||'null')}catch(e){}
   const keep=()=>{try{localStorage.setItem('ld_net',JSON.stringify(acct))}catch(e){}};
-  const cache={};let lastSync=0,lastSave=0,lastHash='',pts=0,state='offline',info=null,startT=0;
+  const cache={};let lastSync=0,lastSave=0,lastHash='',pts=0,state='offline',info=null,startT=0,overwrite=false,conflictShown=false,acode=null;
   async function call(path,body,timeout=12000){
     const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),timeout);
     try{const r=await fetch(base()+path,{method:body?'POST':'GET',headers:{'content-type':'application/json',...(acct&&acct.token?{authorization:'Bearer '+acct.token}:{})},body:body?JSON.stringify(body):undefined,signal:ctl.signal,keepalive:!!(body&&body.keep)});
@@ -3358,7 +3405,8 @@ const NET=(()=>{
     const e=entry();const h=JSON.stringify([e.floor,e.level,e.bosses,e.raid,e.log,e.title,e.priv,e.gk,e.clan&&e.clan.tag,S.name,myLadder()]);
     const t=Date.now();if(!force&&h===lastHash&&t-lastSync<6e5&&!pts)return;
     const withSave=force||t-lastSave>3e5;const send=pts;
-    try{const d=await call('/api/sync',{name:S.name,ladder:myLadder(),entry:e,clanPts:send,save:withSave?saveCode():undefined,force:!!force,keep:keepalive});
+    try{const ow=overwrite;const d=await call('/api/sync',{name:S.name,ladder:myLadder(),entry:e,clanPts:send,save:withSave?saveCode():undefined,prog:Math.floor(S.playSec||0),overwrite:ow||undefined,force:!!force,keep:keepalive});if(ow)overwrite=false;
+      if(d.conflict&&!conflictShown){conflictShown=true;askCloud(null,'conflict')}
       if(d.banned){S.netBan=d.banned;return}else if(S.netBan)S.netBan=null;if(d.grants&&d.grants.length)applyGrants(d.grants);if(!d.skipped){pts-=send;lastHash=h;lastSync=t;if(withSave)lastSave=t;if(d.tier&&info)info.tier=d.tier}}catch(err){}}
   // tell the server about a big moment; it is logged and, if rare enough, announced in Discord
   function event(kind,text,odds,extra){if(!on()||S.season||!S.name||S.testHero||(S.dropTest||1)>1||S.oneHit)return;ensure().then(ok=>{if(ok)call('/api/event',{kind,text,odds:odds||0,...(extra||{})}).catch(()=>{})}).catch(()=>{})}
@@ -3378,19 +3426,40 @@ const NET=(()=>{
   async function start(){if(!on())return;startT=Date.now();
     // coming back from Discord login or linking
     const hsh=location.hash||'';const m=hsh.match(/ldauth=([0-9a-f]{40,})/);
-    if(m){acct={token:m[1]};keep();history.replaceState(null,'',location.pathname+location.search);try{info=await call('/api/me');acct={id:info.id,token:m[1],code:info.code};keep();await loadCloud(true)}catch(e){toast('Discord login failed. Try again.')}}
+    if(m){history.replaceState(null,'',location.pathname+location.search);await signin(m[1])}
     if(/ldlinked=1/.test(hsh)){history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>banner('DISCORD LINKED','Your rank role updates as you climb','#5865f2'),800)}
+    if(/ldglinked=1/.test(hsh)){history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>banner('GOOGLE LINKED','Sign in with Google on any device to get this hero','#6fb1ff'),800)}
+    if(movedAway())return;
     try{await ensure();await refreshMe();await sync(true)}catch(e){}
     setInterval(()=>sync(false),120000);
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')sync(true,true)});}
-  async function loadCloud(auto){try{const d=await call('/api/save');if(!d.data){toast('No cloud save yet');return}
-      const s=readCode(d.data);const go=()=>{S=migrate(s);B.mob=null;B.raid=null;B.rush=null;calc();B.php=C.maxHp;save();closeModal();buildNav();show('dungeon');updateTop();updateEvBar();banner('CLOUD SAVE LOADED',`Floor ${S.floor} · ${S.name}`,'#6fd08c')};
-      if(auto&&S.bestEver>=s.bestEver){toast('Signed in. This device already has your progress.');return}
-      go()}catch(e){toast('Could not load your cloud save')}}
-  async function discord(mode){if(mode==='login'){location.href=base()+'/discord/login';return}
-    try{await ensure();await sync(true);const d=await call('/api/discord/start',{mode});location.href=d.url}catch(e){toast(e.message||'Could not start Discord linking')}}
+  const heroLine=x=>`<b>${esc(x.name||'Adventurer')}</b> · deepest floor ${fmt(x.bestEver||x.floor||1)} · played ${fmtSec(Math.floor(x.playSec||0))}`;
+  const freshHero=()=>(S.playSec||0)<600&&(S.bestEver||1)<=5;
+  function useSave(s,msg){S=migrate(s);B.mob=null;B.raid=null;B.rush=null;calc();B.php=C.maxHp;save();closeModal();buildNav();show('dungeon');updateTop();updateEvBar();banner(msg||'HERO LOADED',`Floor ${S.floor} · ${S.name}`,'#6fd08c')}
+  // compare this device's hero with another copy and let the player pick; nothing is replaced silently
+  async function askCloud(data,why){let s=null;try{if(!data){const d=await call('/api/save');data=d.data}if(data)s=readCode(data)}catch(e){toast('Could not load your cloud save');return}
+    if(!s){if(why!=='manual'){toast('Signed in. Your hero on this device is now backed up.');overwrite=true;sync(true)}else toast('No cloud save yet');return}
+    if(why!=='manual'&&why!=='conflict'&&freshHero()){useSave(s,'WELCOME BACK');return}
+    if(why!=='manual'&&Math.abs((s.playSec||0)-(S.playSec||0))<120&&s.name===S.name){toast('Signed in. This device already has your latest progress.');return}
+    const cloudNewer=(s.playSec||0)>=(S.playSec||0);
+    openModal(`<div class="shead"><h2>${why==='conflict'?'Newer progress found':'Which hero do you want?'}</h2></div>
+      <div class="muted" style="font-size:13px">${why==='conflict'?'Another device saved more progress to your account than this one has. Pick the one to keep.':'This account already has a hero saved. Pick the one to keep on this device.'}</div>
+      <section class="card sec" style="margin:0"><div class="eyebrow">Saved to your account${cloudNewer?' · more progress':''}</div><div style="font-size:14px">${heroLine(s)}</div><button class="btn ${cloudNewer?'pri':''}" data-act="pickcloud">Play this hero</button></section>
+      <section class="card sec" style="margin:0"><div class="eyebrow">On this device${cloudNewer?'':' · more progress'}</div><div style="font-size:14px">${heroLine(S)}</div><button class="btn ${cloudNewer?'':'pri'}" data-act="pickhere">Keep this one</button></section>
+      <div class="muted" style="font-size:12px">The one you don't pick is replaced. Copy a backup code from Settings first if you want to keep both.</div>`);
+    pendingCloud=s}
+  let pendingCloud=null;
+  function pick(which){const s=pendingCloud;pendingCloud=null;closeModal();if(which==='cloud'&&s){useSave(s,'HERO LOADED');conflictShown=false}else{overwrite=true;conflictShown=false;sync(true).then(()=>toast('Kept this hero. It is now your saved hero.'))}}
+  async function loadCloud(){return askCloud(null,'manual')}
+  async function signin(token){acct={token};keep();try{info=await call('/api/me');acct={id:info.id,token,code:info.code};keep();acode=null;drop('');await askCloud(null,'signin');refreshMe()}catch(e){toast('Sign-in failed. Try again.')}}
+  async function signinCode(code){try{const d=await call('/api/account/signin',{code});await signin(d.token);return true}catch(e){toast(e.message||'Could not sign in');return false}}
+  async function accountCode(){if(acode)return acode;try{await ensure();const d=await call('/api/account/code');acode=d.code;return acode}catch(e){toast(e.message||'Could not reach the server');return null}}
+  async function newCode(){try{const d=await call('/api/account/newcode',{});acode=d.code;acct={...acct,token:d.token};keep();return acode}catch(e){toast(e.message||'Could not make a new code');return null}}
+  async function google(mode){try{await ensure();await sync(true);const d=await call('/api/google/start',{mode});location.href=d.url}catch(e){toast(e.message||'Could not start Google sign-in')}}
+  async function discord(mode){if(mode==='login'&&!(acct&&acct.token)){location.href=base()+'/discord/login';return}
+    try{await ensure();await sync(true);const d=await call('/api/discord/start',{mode});location.href=d.url}catch(e){toast(e.message||'Could not start Discord')}}
   async function deleteAccount(){if(!acct||!acct.token)return false;await call('/api/account/delete',{confirm:'DELETE'});acct=null;try{localStorage.removeItem('ld_net')}catch(e){}return true}
-  return {deleteAccount,on,start,sync,event,get,drop,act,call,discord,loadCloud,refreshMe,
+  return {deleteAccount,on,start,sync,event,get,drop,act,call,discord,google,loadCloud,refreshMe,pick,signinCode,accountCode,newCode,cachedCode:()=>acode,
     id:()=>acct&&acct.id,code:()=>acct&&acct.code,info:()=>info,state:()=>on()?(acct?state:'connecting'):'offline',
     addPts:n=>{if(S.clan&&S.clan.online)pts+=n},
     board:(ladder,cat,zone)=>get(`b:${ladder}:${cat}:${cat==='kc'?zone:''}`,`/api/board?ladder=${ladder}&cat=${cat}&zone=${zone||0}`,45000),
@@ -3416,7 +3485,12 @@ const ICONS={
 };
 const TABS=[['dungeon','Dungeon'],['train','Upgrade'],['camp','Camp'],['hero','Hero'],['social','Social'],['events','Quests'],['pass','Shop']];
 let heroSub='gear';
-let tab='dungeon',refresher=null;
+let tab='dungeon',refresher=null;const WIDEQ=matchMedia('(min-width:1024px)'),wide=()=>WIDEQ.matches,FEED=[];
+function sideRefresh(){const hp=clamp(B.php/C.maxHp,0,1);const kt=killTime(S.floor);
+  $('#sHero').innerHTML=`<div class="eyebrow">${esc(S.name||'Hero')}</div><div class="srow"><span>Health</span><b>${fmt(Math.max(0,B.php))} / ${fmt(C.maxHp)}</b></div><div class="sbar"><i style="width:${pct(hp)};background:${hp<0.3?'#e0564a':'#5fc77a'}"></i></div>
+   <div class="srow"><span>Max hit</span><b>${fmt(C.maxHit)}</b></div><div class="srow"><span>Attack speed</span><b>${C.interval.toFixed(2)}s</b></div><div class="srow"><span>Kill time here</span><b>${kt>=60?fmtSec(Math.round(kt)):kt.toFixed(1)+'s'}</b></div>
+   <div class="srow"><span>Deepest floor</span><b>${fmt(S.bestEver||S.floor)}</b></div><div class="srow"><span>Monsters slain</span><b>${fmt(S.kills||0)}</b></div><div class="srow"><span>Bosses slain</span><b>${fmt(S.bosses||0)}</b></div>`;
+  $('#sLoot').innerHTML=`<div class="eyebrow">Recent loot</div>${FEED.length?FEED.slice(0,6).map(f=>`<div class="sloot" style="color:${f.c}">${esc(f.n)}</div>`).join(''):'<div class="muted">Nothing yet this session</div>'}`}
 function buildNav(){$('#nav').innerHTML=TABS.map(([k,n])=>`<button data-tab="${k}" aria-current="${tab===k}">${ICONS[k]}${n}</button>`).join('')}
 function show(k){
   try{localStorage.setItem('lunacy_switch',k+'|'+Date.now())}catch(e){}
@@ -3428,7 +3502,8 @@ function show(k){
   $('#panel').hidden=false;let t;try{t=TV[k]()}catch(e){reportErr(e,'page '+k);try{S=migrate(S);calc();t=TV[k]()}catch(e2){t={html:`<section class="card sec"><h3>This page hit a problem</h3><div class="muted" style="font-size:13.5px">Your progress is safe. Tap Repair to fix your save, or go back to the battle.</div><div class="grid2"><button class="btn pri" data-act="repair">Repair save</button><button class="btn" data-tab="dungeon">Back to battle</button></div></section>`}}}$('#pc').innerHTML=t.html;refresher=t.refresh||null;if(refresher)refresher();if(!same)$('#panel').scrollTop=0;
 }
 function hudRefresh(){
-  {const on=EX.on();$('#stage').classList.toggle('ex',on);$('#hHp').hidden=!on;if(on&&tab==='dungeon')$('#hPush').textContent=S.push?'Pushing':S.pushAt?'Farming · push in '+fmtSec(Math.max(0,S.pushAt-S.playSec)):'Farming'}
+  if(wide())try{sideRefresh()}catch(e){}
+  {const on=EX.on();$('#stage').classList.toggle('ex',on);$('#hHp').hidden=!on;if(on&&(tab==='dungeon'||wide()))$('#hPush').textContent=S.push?'Pushing':S.pushAt?'Farming · push in '+fmtSec(Math.max(0,S.pushAt-S.playSec)):'Farming'}
   {const ha=$('#hAuto');if(ha&&!EX.on())ha.hidden=true}
   try{beltRefresh()}catch(e){}
   {const g=nextGoal();$('#hGoal').textContent=(B.raid||B.rush)?'':g.t+(g.go?' ›':'')}
@@ -4355,11 +4430,20 @@ TV.friends=()=>{
    <section class="sec"><h3>Friends <small>${list.length}</small></h3><div class="list">${list.map((e,i)=>`<div class="lbrow" style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center"><button style="all:unset;cursor:pointer;min-width:0" data-act="viewp" data-i="${i}"><span class="nm">${e.clan?`<span style="color:${e.clan.color};font-size:12px">[${esc(e.clan.tag)}]</span> `:''}${esc(e.name)}<small style="display:block;color:var(--mute);font-size:11.5px">Floor ${fmtInt(e.floor)} · total level ${fmtInt(e.level)} · seen ${agoT(e.updated||Date.now())} ago</small></span></button><button class="btn sm" data-act="frem" data-v="${esc(e.id)}">${S._frArm===e.id?'Sure?':'Remove'}</button></div>`).join('')||`<div class="row muted">${d?'No friends yet. Share your code!':'Loading…'}</div>`}</div></section>${netNote()}`};
 };
 function onlineSettings(){if(S.netOff)return `<h3>Online</h3><div class="muted" style="font-size:12.5px">Online features are off for this hero. Your progress is only saved on this device.</div><button class="btn" data-act="netback">Go online again (new account)</button>`;if(!NET.on())return '';const i=NET.info();const st=NET.state();
-  return `${S.netBan?`<div class="note" style="color:#ff8a8a;border-color:#ff8a8a">This account is banned from online features: ${esc(S.netBan)}. Contact the Lunacy team on Discord if you think this is a mistake.</div>`:''}<h3>Online</h3><div class="muted" style="font-size:12.5px">${st==='online'?`Connected as <b>${esc(S.name)}</b>${NET.code()?` · friend code <b>${esc(NET.code())}</b>`:''}. Your progress is saved to the cloud every few minutes.`:st==='connecting'?'Connecting…':'Offline right now. Your progress saves on this device and uploads when you reconnect.'}</div>
-   <div class="grid2"><button class="btn ${i&&i.discord?'':'pri'}" data-act="dlink">${i&&i.discord?'Discord: '+esc(i.discord):'Link Discord'}</button><button class="btn" data-act="dlogin">Log in with Discord</button></div>
-   <button class="btn" data-act="netdel" style="color:#ff8a8a">Delete my online account</button>
-   <div class="grid2"><button class="btn" data-act="cloudload">Load cloud save</button><button class="btn" data-act="cloudsync">Save to cloud now</button></div>
-   <div class="muted" style="font-size:12px">${S.discordReward?'':`<b style="color:#8c96ff">Link reward: ${DISCORD_REWARD} Moonstones, flaming Ember Wings and the Discord Member title.</b> `}Link Discord to get your rank role in the server. On a new phone, tap Log in with Discord to bring your hero back.</div>`}
+  const gReady=i&&i.googleReady;
+  return `${S.netBan?`<div class="note" style="color:#ff8a8a;border-color:#ff8a8a">This account is banned from online features: ${esc(S.netBan)}. Contact the Lunacy team on Discord if you think this is a mistake.</div>`:''}<h3>Your account</h3><div class="muted" style="font-size:12.5px">${st==='online'?`Signed in as <b>${esc(S.name)}</b>${NET.code()?` · friend code <b>${esc(NET.code())}</b>`:''}. Your hero saves on this device and backs up to your account every few minutes.`:st==='connecting'?'Connecting…':'Offline right now. Your progress saves on this device and uploads when you reconnect.'}</div>
+   <div class="eyebrow" style="margin-top:4px">Ways to sign in to this hero</div>
+   <div class="grid2"><button class="btn ${i&&i.discord?'':'pri'}" data-act="dlink">${i&&i.discord?'✓ Discord: '+esc(i.discord):'Link Discord'}</button>${gReady?`<button class="btn ${i&&i.google?'':'pri'}" data-act="glink">${i&&i.google?'✓ Google: '+esc(i.google):'Link Google'}</button>`:`<button class="btn" data-act="acshow">Account code</button>`}</div>
+   ${gReady?`<button class="btn" data-act="acshow">Show my account code</button>`:''}
+   <div id="acBox" hidden class="card sec" style="margin:0;gap:8px"><div class="eyebrow">Account code · keep it private</div><div id="acCode" style="font:700 20px ui-monospace,monospace;letter-spacing:.06em;color:var(--gold,#f0d49a);user-select:all">${esc(NET.cachedCode()||'')}</div>
+     <div class="muted" style="font-size:12px">Anyone with this code can sign in as you. Use it on a new phone or computer if you don't use Discord or Google.</div><div class="grid2"><button class="btn pri" data-act="accopy">Copy code</button><button class="btn" data-act="acnew">Make a new code</button></div></div>
+   <div class="eyebrow" style="margin-top:4px">Already have a hero on another device?</div>
+   <div class="grid2"><button class="btn" data-act="dlogin">Sign in with Discord</button>${gReady?`<button class="btn" data-act="glogin">Sign in with Google</button>`:`<button class="btn" data-act="acin">Use account code</button>`}</div>
+   ${gReady?`<button class="btn" data-act="acin">Use an account code</button>`:''}
+   <div id="acIn" hidden class="grid2"><input id="acInput" placeholder="LUNA-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" style="min-width:0;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--ink);font:600 15px ui-monospace,monospace;padding:10px"><button class="btn pri" data-act="acgo">Sign in</button></div>
+   <div class="muted" style="font-size:12px">${S.discordReward?'':`<b style="color:#8c96ff">Link reward: ${DISCORD_REWARD} Moonstones, flaming Ember Wings and the Discord Member title.</b> `}If both devices have a hero, you'll be asked which one to keep.</div>
+   <div class="grid2"><button class="btn" data-act="cloudload">Load saved hero</button><button class="btn" data-act="cloudsync">Save to cloud now</button></div>
+   <button class="btn" data-act="netdel" style="color:#ff8a8a">Delete my online account</button>`}
 TV.market=()=>{
   const sub=`<div class="seg" role="group" aria-label="Trading Post section">${[['buy','Buy'],['sell','Sell'],['offers',`My offers ${S.market.offers.length}/${marketSlots()}`]].map(([k,n])=>`<button data-act="msub" data-v="${k}" aria-pressed="${mSub===k}">${n}</button>`).join('')}</div>`;
   const vs=(price,g)=>{const d=price/g-1;return `<span class="${d<=0?'up':'down'}">${d>=0?'+':''}${Math.round(d*100)}%</span>`};
@@ -4488,7 +4572,7 @@ function trimBag(){
   if(gold>0)addGold(gold*0.75);
   const ids=new Set(keep.map(x=>x.id));S.bag=S.bag.filter(x=>ids.has(x.id));
 }
-function receive(it,src,quiet){
+function receive(it,src,quiet){try{FEED.unshift({n:itemName(it),c:(RAR[it.r]||RAR[0]).c});FEED.length=Math.min(FEED.length,8)}catch(e){}
   S.itemsFound=(S.itemsFound||0)+1;addLook(it);it.at=Date.now();if(!it.id)it.id=uid();
   const cur=S.gear[it.slot];
   if(S.autoEquip!==false&&it.power>cur.power*1.0001&&(it.slot!=='weapon'||styleOf(it.wt)===styleOf(cur.wt))){S.gear[it.slot]=it;stash(cur);calc();if(!quiet&&it.r<2)toast(`Equipped ${itemName(it)}`)}
@@ -4870,7 +4954,17 @@ function act(a,el){
   case 'frem':{if(S._frArm!==v){S._frArm=v;setTimeout(()=>{S._frArm=null},3500);show('social');return}S._frArm=null;NET.act('/api/friend/remove',{id:v}).then(()=>{NET.drop('friends');show('social')});return}
   case 'dlink':NET.discord('link');return;
   case 'dlogin':NET.discord('login');return;
-  case 'cloudload':{if(!S._clArm){S._clArm=true;el.textContent='Tap again: replace this device\'s save';setTimeout(()=>{S._clArm=false},5000);return}S._clArm=false;NET.loadCloud(false);return}
+  case 'glink':NET.google('link');return;
+  case 'glogin':NET.google('login');return;
+  case 'pickcloud':NET.pick('cloud');return;
+  case 'pickhere':NET.pick('here');return;
+  case 'gonew':goNew();return;
+  case 'acshow':NET.accountCode().then(c=>{if(c){const b=$('#acBox');if(b){b.hidden=false;$('#acCode').textContent=c}}});return;
+  case 'accopy':{const c=NET.cachedCode();if(c){try{navigator.clipboard.writeText(c);toast('Account code copied. Keep it private.')}catch(e){toast(c)}}return}
+  case 'acnew':{if(!S._acArm){S._acArm=true;el.textContent='Tap again: other devices get signed out';setTimeout(()=>{S._acArm=false},5000);return}S._acArm=false;NET.newCode().then(c=>{if(c){$('#acCode').textContent=c;toast('New code made. Old code no longer works.')}});return}
+  case 'acin':{const b=$('#acIn');if(b){b.hidden=!b.hidden;if(!b.hidden)$('#acInput').focus()}return}
+  case 'acgo':{const v=($('#acInput')||{}).value||'';NET.signinCode(v);return}
+  case 'cloudload':NET.loadCloud();return;
   case 'cloudsync':NET.sync(true).then(()=>toast('Saved to the cloud'));return;
   case 'cleave':if(!S.clanLeaveArm){S.clanLeaveArm=true;setTimeout(()=>{S.clanLeaveArm=false},3500);show('social');return}S.clanLeaveArm=false;if(S.clan&&S.clan.online){NET.act('/api/clan/leave');NET.drop('clan')}S.clan=null;if(S.look.special==='clan')S.look.special=null;calc();toast('You left your clan');show('social');return;
   case 'gather':{const [k,i]=v.split(':');if(S.gath.act===v){S.gath.act=null}else if(canDo(k,+i)){S.gath.act=v;S.gath.prog=0}show('camp');return}
@@ -4996,11 +5090,11 @@ function frame(now){
   if(dt>0&&dt<0.5){ftAvg=ftAvg*0.97+dt*1000*0.03;if(!autoLow&&S.gfx!=='high'&&ftAvg>36&&B.t>6){autoLow=true;if(!lowNoted){lowNoted=true;toast('Switched to Smooth graphics to keep things fast. Change it in Settings.')}}}
   dt=Math.min(dt,0.1);
   try{step(dt)}catch(e){reportErr(e,'step');B.mob=null;B.dead=0.5}
-  if(tab==='dungeon'){try{render()}catch(e){reportErr(e,'render');try{ctx.restore();ctx.setTransform(1,0,0,1,0,0)}catch(x){}}}
+  if(tab==='dungeon'||wide()){try{render()}catch(e){reportErr(e,'render');try{ctx.restore();ctx.setTransform(1,0,0,1,0,0)}catch(x){}}}
   updateActions();
   if(tab!=='dungeon'){const m=B.mob;$('#miniT').textContent=`Floor ${S.floor} · ${m?m.name:'Next fight'}${B.wind>0?' · Heavy attack!':''}`;$('#miniP').style.width=pct(clamp(B.php/C.maxHp,0,1));$('#miniM').style.width=m?pct(clamp(m.hp/m.maxHp,0,1)):'0%'}
   uiAcc+=dt;saveAcc+=dt;
-  if(uiAcc>0.4){uiAcc=0;updateTop();tutTick();if(refresher&&$('#modal').hidden)refresher();if(!$('#modal').hidden&&document.getElementById('ccv'))drawCreator();
+  if(uiAcc>0.4){uiAcc=0;updateTop();tutTick();if(refresher&&$('#modal').hidden)refresher();if(wide()&&tab!=='dungeon')try{hudRefresh()}catch(e){}if(!$('#modal').hidden&&document.getElementById('ccv'))drawCreator();
     if(Math.floor(now/2000)!==frame._a){frame._a=Math.floor(now/2000);checkAch()}
     if(Math.floor(now/10000)!==frame._e){loginStreak();frame._e=Math.floor(now/10000);_evCache=null;seasonCheck();calc()}}
   if(saveAcc>5){saveAcc=0;marketSim(5);save()}
@@ -5010,7 +5104,10 @@ function frame(now){
 document.addEventListener('visibilitychange',()=>{if(document.hidden){lastWall=Date.now();save()}else catchUp()});
 window.addEventListener('pageshow',e=>{if(e.persisted)catchUp()});window.addEventListener('focus',()=>{if(Date.now()-lastWall>60000)catchUp()});
 window.addEventListener('pagehide',save);
-window.addEventListener('resize',resize);
+window.addEventListener('resize',resize);try{WIDEQ.addEventListener('change',()=>setTimeout(resize,50))}catch(e){}
+// on computers: click the dimmed battle or press Esc to close the open window
+document.addEventListener('pointerdown',e=>{if(wide()&&tab!=='dungeon'&&$('#modal').hidden&&e.target.closest&&e.target.closest('#stage')){e.preventDefault();e.stopPropagation();show('dungeon')}},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&wide()&&tab!=='dungeon'&&$('#modal').hidden)show('dungeon')});
 
 function boot(data){
   const had=load();
@@ -5039,6 +5136,6 @@ function boot(data){
   requestAnimationFrame(t=>{last=t;requestAnimationFrame(frame)});
 }
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
-if(!window.__netStarted){window.__netStarted=1;setTimeout(()=>{try{NET.start()}catch(e){}},1200)}
+if(!window.__netStarted){window.__netStarted=1;setTimeout(()=>{try{takeSaveFromLink()}catch(e){}try{if(!NET.on())movedAway();else NET.start()}catch(e){}},1200)}
 </script>
 <script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script>
