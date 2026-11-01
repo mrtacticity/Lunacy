@@ -4609,6 +4609,7 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.40','Nov 1, 2026','Hero portrait fix',["The Gear page shows your 3D body again. The last update hid it","Equip any scythe and he holds Ashbringer with both hands"]],
  ['1.39','Nov 1, 2026','Hero page',["The Gear page and Customize look now show your 3D body instead of the old painted knight","The clothes change colour to match the helm, body and legs you have equipped"]],
  ['1.38','Nov 1, 2026','Hero size',["The 3D hero is smaller now, about the height of the dungeon walls"]],
  ['1.37','Nov 1, 2026','Hero bodies found',["The male and female bodies now load from the models folder"]],
@@ -7462,12 +7463,14 @@ void m3def(inout vec3 P,inout vec3 N){vec3 p=P;
   if(uDie>0.){${flyer?'P.y-=uDie*0.35;mat3 Dm=rX(uDie*0.6);P=Dm*P;N=Dm*N;':D.style==='anchor'?'P.y-=uDie*0.5;':'mat3 Dm=rZ(uDie*1.45);P=Dm*P;N=Dm*N;P.y-=uDie*0.05;'}}}
 `+sh.vertexShader.replace('#include <beginnormal_vertex>','vec3 objectNormal=vec3(normal);vec3 m3P=vec3(position);m3def(m3P,objectNormal);').replace('#include <begin_vertex>','vec3 transformed=m3P;')};
   m.customProgramCacheKey=()=>'m3'+D.url;return m}
-function dyeMat(m){m.color&&m.color.set('#ffffff');m.onBeforeCompile=sh=>{sh.uniforms.uDye={value:new THREE.Color('#c8c8c8')};m.userData.sh=sh;sh.fragmentShader='uniform vec3 uDye;\n'+sh.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n{vec3 src=diffuseColor.rgb;float mx=max(src.r,max(src.g,src.b));float mn=min(src.r,min(src.g,src.b));float skin=smoothstep(0.03,0.12,src.r-src.b)*smoothstep(0.28,0.62,src.r)*(1.0-smoothstep(0.28,0.55,mx-mn));float hair=smoothstep(0.26,0.07,mx);diffuseColor.rgb=mix(src*uDye*1.45,src,clamp(skin+hair,0.0,1.0));}')};m.needsUpdate=true}
+function dyeMat(m){if(!m)return;m.color&&m.color.set('#ffffff');m.onBeforeCompile=sh=>{sh.uniforms.uDye={value:new THREE.Color('#c8c8c8')};m.userData.sh=sh;sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uDye;').replace('#include <color_fragment>','#include <color_fragment>\n{vec3 src=diffuseColor.rgb;float mx=max(src.r,max(src.g,src.b));float mn=min(src.r,min(src.g,src.b));float skin=smoothstep(0.03,0.12,src.r-src.b)*smoothstep(0.28,0.62,src.r)*(1.0-smoothstep(0.28,0.55,mx-mn));float hair=smoothstep(0.26,0.07,mx);diffuseColor.rgb=mix(src*uDye*1.45,src,clamp(skin+hair,0.0,1.0));}')};m.needsUpdate=true}
 function heroDye(lk,gear){try{const L=heroLooks(lk,gear);const a=new THREE.Color((L.body&&L.body.c)||'#c4c4c4'),h=new THREE.Color((L.helm&&L.helm.c)||'#c4c4c4'),g=new THREE.Color((L.legs&&L.legs.c)||'#c4c4c4');return a.lerp(h,0.34).lerp(g,0.42)}catch(e){return new THREE.Color('#c4c4c4')}}
 function applyDye(m,col){if(m&&m.userData.sh)m.userData.sh.uniforms.uDye.value.copy(col)}
 function h3sync(g,t){
   if(!hero)return;
   const sex=S.look&&S.look.sex==='f'?'f':'m',key='hero_'+sex,A=M3[key];
+  if(!M3.holdB&&!M3.hold){M3.holdB=1;new THREE.GLTFLoader().load('models/hold.glb',gl=>{M3.hold=gl.animations&&gl.animations[0]},undefined,()=>{M3.holdB=2})}
+  if(!M3.wepB&&!M3.wep){M3.wepB=1;new THREE.GLTFLoader().load('models/ashbringer.glb',gl=>{M3.wep=gl.scene},undefined,()=>{M3.wepB=2})}
   if(!use3D()||!A||!A.rig){hero.h3=0;if(!A&&MODEL3D[key])m3load(key);if(g.hero3){g.scene.remove(g.hero3.me);try{g.hero3.mix.stopAllAction()}catch(e){}g.hero3=null}return}
   const dtm=Math.min(0.1,t-(g.h3t||t));g.h3t=t;let o=g.hero3;
   if(!o||o.sex!==sex){if(o){g.scene.remove(o.me);try{o.mix.stopAllAction()}catch(e){}}
@@ -7475,13 +7478,17 @@ function h3sync(g,t){
     const mix=new THREE.AnimationMixer(me),acts={};for(const n in A.clips)if(A.clips[n])acts[n]=mix.clipAction(A.clips[n]);
     g.scene.add(me);me.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(me);const Hh=Math.min(3,Math.max(0.4,(bb.max.y-bb.min.y)||1));
     o=g.hero3={me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null,fit:0.82/Hh,y0:bb.min.y,mat}}
+  if(M3.hold&&!o.acts.hold)o.acts.hold=o.mix.clipAction(M3.hold);
   const dx=hero.x-o.px,dy=hero.y-o.py,sp=Math.hypot(dx,dy);o.px=hero.x;o.py=hero.y;
   const want=sp>0.35?Math.atan2(dx,dy):(hero.dir>0?Math.PI/2:-Math.PI/2);
   o.yaw+=(((want-o.yaw+Math.PI*3)%(Math.PI*2))-Math.PI)*0.22;
-  const st=(sp>0.35||hero.wa>0.3)?'run':'idle',a=o.acts[st]||o.acts.idle;
+  const scythe=!!(S.gear.weapon&&S.gear.weapon.wt==='scythe'&&o.acts.hold);
+  const st=scythe?'hold':((sp>0.35||hero.wa>0.3)?'run':'idle'),a=o.acts[st]||o.acts.idle;
   if(a&&o.cur!==a){a.reset().fadeIn(0.12).play();if(o.cur)o.cur.fadeOut(0.12);o.cur=a}
   if(a&&st==='run')a.timeScale=Math.max(0.75,Math.min(1.5,(sp/Math.max(dtm,0.016))/80));
   o.mix.update(dtm);if(o.hips&&o.hip0)o.hips.position.copy(o.hip0);applyDye(o.mat,heroDye(S.look,S.gear));
+  if(scythe&&M3.wep){if(!o.wep){let hand=null;o.me.traverse(b=>{if(!hand&&b.isBone&&/RightHand$/.test(b.name))hand=b});if(hand){const w=M3.wep.clone(true);w.position.set(-0.2699,0.012,0.0359);w.quaternion.set(-0.7655,-0.6062,0.1519,-0.1533);w.scale.setScalar(0.95);hand.add(w);o.wep=w}}if(o.wep)o.wep.visible=true}
+  else if(o.wep)o.wep.visible=false;
   o.me.position.set(hero.x/T,-(o.y0||0)*o.fit,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(o.fit);o.me.visible=true;hero.h3=1}
 function m3sync(g,t){const live=new Set();g.m3=g.m3||new Map();
   try{h3sync(g,t)}catch(e){if(hero)hero.h3=0}
@@ -8924,15 +8931,21 @@ function invList(){
   return L;
 }
 const lockSvg0='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-const HPREV=(()=>{let R,scene,cam,root,me,mix,mat,sex='',el,lk,gear,raf=0;
+const HPREV=(()=>{let R,scene,cam,root,me,mix,mat,sex='',el,lk,gear,raf=0,bad=0;
   function box(n){if(!n)return null;if(n.tagName==='CANVAS'){let p=n.parentElement.querySelector(':scope > .pv');if(!p){p=document.createElement('div');p.className='pv';n.before(p)}n.style.display='none';return p}return n}
-  function tick(){raf=0;const b=box(el);if(!b||!b.isConnected||!R)return;const sex2=lk&&lk.sex==='f'?'f':'m',key='hero_'+sex2,A=M3[key];
-    if(!A||!A.rig){if(MODEL3D[key])m3load(key);raf=requestAnimationFrame(tick);return}
-    if(sex!==sex2){if(me){root.remove(me);try{mix.stopAllAction()}catch(e){}}me=THREE.SkeletonUtils.clone(A.scene);me.traverse(o=>{if(o.isMesh&&o.material){o.material=o.material.clone();dyeMat(o.material);mat=o.material}});me.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(me);const h=Math.max(0.4,bb.max.y-bb.min.y),s=1.55/h;me.scale.setScalar(s);me.position.y=-bb.min.y*s;root.add(me);mix=new THREE.AnimationMixer(me);const idle=A.clips&&A.clips.idle;if(idle)mix.clipAction(idle).play();sex=sex2}
-    applyDye(mat,heroDye(lk,gear));if(mix)mix.update(0.016);root.rotation.y=0.45;
-    const w=b.clientWidth||140,h=b.clientHeight||200;R.setSize(w,h,false);cam.aspect=w/Math.max(1,h);cam.updateProjectionMatrix();R.render(scene,cam);raf=requestAnimationFrame(tick)}
-  function show(n,look,g){if(!n||!window.THREE)return;el=n;lk=look;gear=g;if(!R){R=new THREE.WebGLRenderer({alpha:true,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.outputColorSpace=THREE.SRGBColorSpace;R.domElement.style.cssText='width:100%;height:100%;display:block';scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(30,0.7,0.05,20);cam.position.set(0.2,1.15,2.25);cam.lookAt(0,0.82,0);scene.add(new THREE.HemisphereLight(0xffffff,0x1a1c28,1.25));const k=new THREE.DirectionalLight(0xfff1dc,1.5);k.position.set(2,3,2);scene.add(k);root=new THREE.Group();scene.add(root)}
-    const b=box(n);if(b&&R.domElement.parentElement!==b)b.appendChild(R.domElement);if(!raf)raf=requestAnimationFrame(tick)}
+  function flat(b){let c=b.querySelector('canvas.flat');if(!c){c=document.createElement('canvas');c.className='flat';c.width=280;c.height=400;c.style.cssText='width:100%;height:100%;display:block';b.appendChild(c)}const x=c.getContext('2d');if(!x)return;x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,280,400);x.translate(140,370);x.scale(2.15,2.15);try{drawHero(x,lk||S.look,gear||S.gear,{t:B.t||0,aura:S.asc})}catch(e){}}
+  function tick(){raf=0;const b=box(el);if(!b||!b.isConnected)return;if(bad){flat(b);raf=requestAnimationFrame(tick);return}
+    try{const sex2=lk&&lk.sex==='f'?'f':'m',key='hero_'+sex2,A=M3[key];
+      if(!A||!A.rig){if(MODEL3D[key])m3load(key);raf=requestAnimationFrame(tick);return}
+      if(sex!==sex2){if(me){root.remove(me);try{mix.stopAllAction()}catch(e){}}me=THREE.SkeletonUtils.clone(A.scene);me.traverse(o=>{if(o.isMesh&&o.material){o.material=o.material.clone();dyeMat(o.material);mat=o.material}});me.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(me);let h=bb.max.y-bb.min.y;if(!(h>0.4&&h<3))h=1;const s=1.45/h;me.scale.setScalar(s);me.position.y=-Math.min(2,Math.max(-1,bb.min.y))*s;root.add(me);mix=new THREE.AnimationMixer(me);const idle=A.clips&&A.clips.idle;if(idle)mix.clipAction(idle).play();sex=sex2}
+      const flatc=b.querySelector('canvas.flat');if(flatc)flatc.remove();
+      applyDye(mat,heroDye(lk,gear));if(mix)mix.update(0.016);root.rotation.y=0.45;
+      const w=b.clientWidth||140,hh=b.clientHeight||200;R.setSize(w,hh,false);cam.aspect=w/Math.max(1,hh);cam.updateProjectionMatrix();R.render(scene,cam)}catch(e){bad=1;flat(b)}
+    raf=requestAnimationFrame(tick)}
+  function show(n,look,g){if(!n)return;el=n;lk=look;gear=g;const b=box(n);if(!window.THREE){if(b)flat(b);return}
+    if(!R&&!bad){try{R=new THREE.WebGLRenderer({alpha:true,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.outputColorSpace=THREE.SRGBColorSpace;R.domElement.style.cssText='width:100%;height:100%;display:block';scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(28,0.7,0.05,20);cam.position.set(0.15,1.05,2.05);cam.lookAt(0,0.78,0);scene.add(new THREE.HemisphereLight(0xffffff,0x1a1c28,1.35));const k=new THREE.DirectionalLight(0xfff1dc,1.6);k.position.set(1.5,2.4,2);scene.add(k);root=new THREE.Group();scene.add(root)}catch(e){bad=1}}
+    if(bad){if(b)flat(b);if(!raf)raf=requestAnimationFrame(tick);return}
+    if(b&&R.domElement.parentElement!==b)b.appendChild(R.domElement);if(!raf)raf=requestAnimationFrame(tick)}
   return {show}})();
 TV.gear=()=>{
   const set=setInfo();const L=S.bag.slice().sort((a,b)=>b.r-a.r||b.power-a.power);

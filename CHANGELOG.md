@@ -2,6 +2,10 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.40 | Hero portrait fix | Nov 1, 2026
+- The Gear page shows your 3D body again. The last update hid it
+- Equip any scythe and he holds Ashbringer with both hands
+
 ## v1.39 | Hero page | Nov 1, 2026
 - The Gear page and Customize look now show your 3D body instead of the old painted knight
 - The clothes change colour to match the helm, body and legs you have equipped
