@@ -474,7 +474,7 @@ input[type=text],input[type=number],input[type=password],select{background:var(-
 .chip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;color:var(--mute)}
 .chip[aria-pressed="true"]{color:var(--ink);border-color:var(--moon);background:#1c2440}
 .creator{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:start}
-.creator canvas{width:100%;aspect-ratio:7/10;background:radial-gradient(circle at 50% 30%,#1c2340,#0b0d16 70%);border:1px solid var(--line);border-radius:10px}
+.creator canvas,.creator .pv{width:100%;aspect-ratio:7/10;background:radial-gradient(circle at 50% 30%,#1c2340,#0b0d16 70%);border:1px solid var(--line);border-radius:10px}
 .cctrl{display:flex;flex-direction:column;gap:10px;min-width:0}
 @media (max-width:380px){.creator,.gearwrap{grid-template-columns:110px 1fr}}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -4609,6 +4609,7 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.39','Nov 1, 2026','Hero page',["The Gear page and Customize look now show your 3D body instead of the old painted knight","The clothes change colour to match the helm, body and legs you have equipped"]],
  ['1.38','Nov 1, 2026','Hero size',["The 3D hero is smaller now, about the height of the dungeon walls"]],
  ['1.37','Nov 1, 2026','Hero bodies found',["The male and female bodies now load from the models folder"]],
  ['1.36','Nov 1, 2026','Male and female heroes',["New heroes pick a name and a male or female body before entering the dungeon","The 3D hero in the dungeon is now that body. Change it any time under Customize look","Armor still shows on your paper doll. 3D armor pieces come next"]],
@@ -7461,23 +7462,26 @@ void m3def(inout vec3 P,inout vec3 N){vec3 p=P;
   if(uDie>0.){${flyer?'P.y-=uDie*0.35;mat3 Dm=rX(uDie*0.6);P=Dm*P;N=Dm*N;':D.style==='anchor'?'P.y-=uDie*0.5;':'mat3 Dm=rZ(uDie*1.45);P=Dm*P;N=Dm*N;P.y-=uDie*0.05;'}}}
 `+sh.vertexShader.replace('#include <beginnormal_vertex>','vec3 objectNormal=vec3(normal);vec3 m3P=vec3(position);m3def(m3P,objectNormal);').replace('#include <begin_vertex>','vec3 transformed=m3P;')};
   m.customProgramCacheKey=()=>'m3'+D.url;return m}
+function dyeMat(m){m.color&&m.color.set('#ffffff');m.onBeforeCompile=sh=>{sh.uniforms.uDye={value:new THREE.Color('#c8c8c8')};m.userData.sh=sh;sh.fragmentShader='uniform vec3 uDye;\n'+sh.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n{vec3 src=diffuseColor.rgb;float mx=max(src.r,max(src.g,src.b));float mn=min(src.r,min(src.g,src.b));float skin=smoothstep(0.03,0.12,src.r-src.b)*smoothstep(0.28,0.62,src.r)*(1.0-smoothstep(0.28,0.55,mx-mn));float hair=smoothstep(0.26,0.07,mx);diffuseColor.rgb=mix(src*uDye*1.45,src,clamp(skin+hair,0.0,1.0));}')};m.needsUpdate=true}
+function heroDye(lk,gear){try{const L=heroLooks(lk,gear);const a=new THREE.Color((L.body&&L.body.c)||'#c4c4c4'),h=new THREE.Color((L.helm&&L.helm.c)||'#c4c4c4'),g=new THREE.Color((L.legs&&L.legs.c)||'#c4c4c4');return a.lerp(h,0.34).lerp(g,0.42)}catch(e){return new THREE.Color('#c4c4c4')}}
+function applyDye(m,col){if(m&&m.userData.sh)m.userData.sh.uniforms.uDye.value.copy(col)}
 function h3sync(g,t){
   if(!hero)return;
   const sex=S.look&&S.look.sex==='f'?'f':'m',key='hero_'+sex,A=M3[key];
   if(!use3D()||!A||!A.rig){hero.h3=0;if(!A&&MODEL3D[key])m3load(key);if(g.hero3){g.scene.remove(g.hero3.me);try{g.hero3.mix.stopAllAction()}catch(e){}g.hero3=null}return}
   const dtm=Math.min(0.1,t-(g.h3t||t));g.h3t=t;let o=g.hero3;
   if(!o||o.sex!==sex){if(o){g.scene.remove(o.me);try{o.mix.stopAllAction()}catch(e){}}
-    const me=THREE.SkeletonUtils.clone(A.scene);let hips=null;me.traverse(b=>{if(b.isBone&&!hips&&/Hips/.test(b.name))hips=b;if(b.isMesh&&b.material)b.material=b.material.clone()});
+    const me=THREE.SkeletonUtils.clone(A.scene);let hips=null,mat=null;me.traverse(b=>{if(b.isBone&&!hips&&/Hips/.test(b.name))hips=b;if(b.isMesh&&b.material){b.material=b.material.clone();dyeMat(b.material);mat=b.material}});
     const mix=new THREE.AnimationMixer(me),acts={};for(const n in A.clips)if(A.clips[n])acts[n]=mix.clipAction(A.clips[n]);
     g.scene.add(me);me.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(me);const Hh=Math.min(3,Math.max(0.4,(bb.max.y-bb.min.y)||1));
-    o=g.hero3={me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null,fit:0.82/Hh,y0:bb.min.y}}
+    o=g.hero3={me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null,fit:0.82/Hh,y0:bb.min.y,mat}}
   const dx=hero.x-o.px,dy=hero.y-o.py,sp=Math.hypot(dx,dy);o.px=hero.x;o.py=hero.y;
   const want=sp>0.35?Math.atan2(dx,dy):(hero.dir>0?Math.PI/2:-Math.PI/2);
   o.yaw+=(((want-o.yaw+Math.PI*3)%(Math.PI*2))-Math.PI)*0.22;
   const st=(sp>0.35||hero.wa>0.3)?'run':'idle',a=o.acts[st]||o.acts.idle;
   if(a&&o.cur!==a){a.reset().fadeIn(0.12).play();if(o.cur)o.cur.fadeOut(0.12);o.cur=a}
   if(a&&st==='run')a.timeScale=Math.max(0.75,Math.min(1.5,(sp/Math.max(dtm,0.016))/80));
-  o.mix.update(dtm);if(o.hips&&o.hip0)o.hips.position.copy(o.hip0);
+  o.mix.update(dtm);if(o.hips&&o.hip0)o.hips.position.copy(o.hip0);applyDye(o.mat,heroDye(S.look,S.gear));
   o.me.position.set(hero.x/T,-(o.y0||0)*o.fit,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(o.fit);o.me.visible=true;hero.h3=1}
 function m3sync(g,t){const live=new Set();g.m3=g.m3||new Map();
   try{h3sync(g,t)}catch(e){if(hero)hero.h3=0}
@@ -8920,11 +8924,21 @@ function invList(){
   return L;
 }
 const lockSvg0='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+const HPREV=(()=>{let R,scene,cam,root,me,mix,mat,sex='',el,lk,gear,raf=0;
+  function box(n){if(!n)return null;if(n.tagName==='CANVAS'){let p=n.parentElement.querySelector(':scope > .pv');if(!p){p=document.createElement('div');p.className='pv';n.before(p)}n.style.display='none';return p}return n}
+  function tick(){raf=0;const b=box(el);if(!b||!b.isConnected||!R)return;const sex2=lk&&lk.sex==='f'?'f':'m',key='hero_'+sex2,A=M3[key];
+    if(!A||!A.rig){if(MODEL3D[key])m3load(key);raf=requestAnimationFrame(tick);return}
+    if(sex!==sex2){if(me){root.remove(me);try{mix.stopAllAction()}catch(e){}}me=THREE.SkeletonUtils.clone(A.scene);me.traverse(o=>{if(o.isMesh&&o.material){o.material=o.material.clone();dyeMat(o.material);mat=o.material}});me.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(me);const h=Math.max(0.4,bb.max.y-bb.min.y),s=1.55/h;me.scale.setScalar(s);me.position.y=-bb.min.y*s;root.add(me);mix=new THREE.AnimationMixer(me);const idle=A.clips&&A.clips.idle;if(idle)mix.clipAction(idle).play();sex=sex2}
+    applyDye(mat,heroDye(lk,gear));if(mix)mix.update(0.016);root.rotation.y=0.45;
+    const w=b.clientWidth||140,h=b.clientHeight||200;R.setSize(w,h,false);cam.aspect=w/Math.max(1,h);cam.updateProjectionMatrix();R.render(scene,cam);raf=requestAnimationFrame(tick)}
+  function show(n,look,g){if(!n||!window.THREE)return;el=n;lk=look;gear=g;if(!R){R=new THREE.WebGLRenderer({alpha:true,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.outputColorSpace=THREE.SRGBColorSpace;R.domElement.style.cssText='width:100%;height:100%;display:block';scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(30,0.7,0.05,20);cam.position.set(0.2,1.15,2.25);cam.lookAt(0,0.82,0);scene.add(new THREE.HemisphereLight(0xffffff,0x1a1c28,1.25));const k=new THREE.DirectionalLight(0xfff1dc,1.5);k.position.set(2,3,2);scene.add(k);root=new THREE.Group();scene.add(root)}
+    const b=box(n);if(b&&R.domElement.parentElement!==b)b.appendChild(R.domElement);if(!raf)raf=requestAnimationFrame(tick)}
+  return {show}})();
 TV.gear=()=>{
   const set=setInfo();const L=S.bag.slice().sort((a,b)=>b.r-a.r||b.power-a.power);
   const html=`
   <section class="gearwrap">
-    <div style="display:flex;flex-direction:column;gap:8px"><canvas class="heroprev" id="gHero" width="280" height="400"></canvas><button class="btn sm" data-act="creator">Customize look</button></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div class="heroprev" id="gHero"></div><button class="btn sm" data-act="creator">Customize look</button></div>
     <div class="slots">${SLOTS.map(s=>{const it=S.gear[s];return `<button class="slot" data-act="iopen" data-v="${it.id}" style="--rc:${RAR[it.r].c}"><img class="iic" data-ic="${it.id}" alt="" width="40" height="40"><span class="sl">${SLOTLABEL[s]}</span><span class="nm">${esc(itemName(it))}</span><span class="pw num">${RAR[it.r].n} · power ${fmt(it.power)}</span></button>`}).join('')}</div>
   </section>
   ${(()=>{const st=curStyle();return `<section class="card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div style="min-width:0"><div class="eyebrow">Combat style</div><div style="font-family:var(--display);font-weight:700;font-size:17px;color:${STYLECOL[st]}">${STYLEN[st]}</div><div class="muted" style="font-size:12.5px">${STYLEDESC[st]}</div></div><div class="chips">${['melee','ranged','magic'].filter(x=>x!==st).map(x=>{const b=bestOfStyle(x);return `<button class="chip" data-act="style" data-v="${x}" ${b?'':'disabled'}>${b?'Use '+STYLEN[x]:'No '+STYLEN[x].toLowerCase()+' weapon yet'}</button>`}).join('')}</div></section>`})()}
@@ -8933,7 +8947,7 @@ TV.gear=()=>{
    ${L.length?`<div class="list">${L.map(it=>{const cur=S.gear[it.slot];const d=it.power/cur.power;return `<div class="item ic" style="--rc:${RAR[it.r].c}"><img class="iic" data-ic="${it.id}" alt="" width="46" height="46"><button data-act="iopen" data-v="${it.id}" style="all:unset;cursor:pointer;min-width:0"><div class="nm">${it.lock?'🔒 ':''}${esc(itemName(it))}</div><div class="d">${SLOTLABEL[it.slot]} · ${RAR[it.r].n} · <span class="${d>=1?'up':'down'}">${d>=1?'+':''}${d>=10?'×'+fmtInt(d):((d-1)*100).toFixed(0)+'%'}</span> vs equipped</div></button><div class="bt"><button class="btn sm pri" data-act="iequip" data-v="${it.id}">Equip</button><button class="btn sm" data-act="iopen" data-v="${it.id}">More</button></div></div>`}).join('')}</div>`:'<div class="note">Common and Uncommon gear auto-equips when it is better and salvages into gold when it is not. Rare and Legendary items wait here.</div>'}
    <div class="muted" style="font-size:12.5px">Duplicate uniques are salvaged automatically, keeping your strongest copy. Tap More to lock, sell, salvage, break down or empower an item.</div>
   </section>`;
-  return {html,refresh(){fillIcons($('#panel'),80);const c=$('#gHero');if(!c)return;const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,280,400);x.translate(150,370);x.scale(2.7,2.7);drawHero(x,S.look,S.gear,{t:B.t,aura:S.asc})}};
+  return {html,refresh(){fillIcons($('#panel'),80);const c=$('#gHero');if(c)HPREV.show(c,S.look,S.gear)}};
 };
 function openItem(id,arm){
   const f=findItem(id);if(!f)return;const it=f.it,cur=S.gear[it.slot];const d=it.power/cur.power-1;
@@ -9125,7 +9139,7 @@ function openCreator(){
     return `<div class="field"><label for="ov_${slot}">${SLOTLABEL[slot]} appearance</label><select id="ov_${slot}" data-ov="${slot}"><option value="">Show equipped</option>${opts}</select></div>`};
   const specials=((S.clan&&clanLevel()>=10)||S.admin?`<button class="chip" data-cc="special" data-v="clan" aria-pressed="${draft.special==='clan'}">Clan cape</button>`:'')+SPECIALCAPES.map(c=>{const have=S.admin||c.k==='tester'?S.titles.includes('Tester'):c.k==='eclipse'?passTier()===2||S.pets.eclipse:c.k==='hollowmoon'?!!(getMeta().s1||{}).cape:c.k.startsWith('sc_')?sLvl(c.k.slice(3))>=99:c.k==='discord'?!!S.discordReward:c.k==='void'?S.bestEver>=450:S.bestEver>=500;return `<button class="chip" data-cc="special" data-v="${c.k}" aria-pressed="${draft.special===c.k}" ${have?'':'disabled'} title="${have?'':'Requires '+c.need}">${c.n}${have?'':' · locked'}</button>`}).join('');
   openModal(`<div class="shead"><h2>Your character</h2><button class="x" data-act="close" aria-label="Close">×</button></div>
-   <div class="creator"><canvas id="ccv" width="300" height="430"></canvas>
+   <div class="creator"><div class="pv" id="ccv"></div>
     <div class="cctrl">
      <div class="field"><label>Body</label><div class="chips"><button class="chip" data-cc="sex" data-v="m" aria-pressed="${draft.sex!=='f'}">Male</button><button class="chip" data-cc="sex" data-v="f" aria-pressed="${draft.sex==='f'}">Female</button></div><div class="muted" style="font-size:12.5px">This is the 3D hero in the dungeon. Armor is still on the paper doll until those pieces are added.</div></div>
      ${PH.ok()?`<div class="field"><label>Cape</label><div class="swatches">${CAPES.map(c=>`<button class="swatch" style="background:${c}" data-cc="cape" data-v="${c}" aria-pressed="${!draft.special&&draft.cape===c}" aria-label="Cape colour"></button>`).join('')}</div><div class="chips">${specials}</div></div><div class="muted" style="font-size:12.5px">Your armour comes from what you wear. Change how it looks with Cosmetic override below.</div>`:`<div class="field"><label>Build</label><div class="chips">${['Lean','Broad'].map((n,i)=>`<button class="chip" data-cc="build" data-v="${i}" aria-pressed="${draft.build===i}">${n}</button>`).join('')}</div></div>
@@ -9139,7 +9153,7 @@ function openCreator(){
    ${['helm','body','legs','weapon','shield'].map(sel).join('')}
    <button class="btn pri" data-act="savelook">Save character</button>`,(m)=>{drawCreator()});
 }
-function drawCreator(){const c=document.getElementById('ccv');if(!c)return;const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,300,430);x.translate(160,400);x.scale(2.9,2.9);drawHero(x,draft,S.gear,{t:B.t})}
+function drawCreator(){const c=document.getElementById('ccv');if(c)HPREV.show(c,draft,S.gear)}
 let logoTaps=0,logoTimer=0;
 function adminLogin(){
   openModal(`<div class="shead"><h2>Staff sign-in</h2><button class="x" data-act="close" aria-label="Close">×</button></div>
