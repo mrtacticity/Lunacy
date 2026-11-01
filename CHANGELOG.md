@@ -2,6 +2,11 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.43 | Reaper grip | Nov 1, 2026
+- Ashbringer is now held upright in your hero's hand like a reaper's scythe, blade curving over the head
+- Your weapon arm stays steady while you run, so the scythe no longer flails around
+- Fixed the 3D hero looking washed out and too bright under the dungeon light
+
 ## v1.42 | Scythe grip | Nov 1, 2026
 - Ashbringer sits in both hands and lies flat so you can see the blade from above
 

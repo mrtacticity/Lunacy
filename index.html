@@ -4609,6 +4609,7 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.43','Nov 1, 2026','Reaper grip',["Ashbringer is now held upright in your hero's hand like a reaper's scythe, blade curving over the head", "Your weapon arm stays steady while you run, so the scythe no longer flails around", "Fixed the 3D hero looking washed out and too bright under the dungeon light"]],
  ['1.42','Nov 1, 2026','Scythe grip',["Ashbringer sits in both hands and lies flat so you can see the blade from above"]],
  ['1.41','Nov 1, 2026','Test hero gear',["The test hero's bag now holds every unique piece, locked so nothing gets salvaged","Ashbringer is equipped so the scythe grip can be checked right away"]],
  ['1.40','Nov 1, 2026','Hero portrait fix',["The Gear page shows your 3D body again. The last update hid it","Equip any scythe and he holds Ashbringer with both hands"]],
@@ -7465,7 +7466,7 @@ void m3def(inout vec3 P,inout vec3 N){vec3 p=P;
   if(uDie>0.){${flyer?'P.y-=uDie*0.35;mat3 Dm=rX(uDie*0.6);P=Dm*P;N=Dm*N;':D.style==='anchor'?'P.y-=uDie*0.5;':'mat3 Dm=rZ(uDie*1.45);P=Dm*P;N=Dm*N;P.y-=uDie*0.05;'}}}
 `+sh.vertexShader.replace('#include <beginnormal_vertex>','vec3 objectNormal=vec3(normal);vec3 m3P=vec3(position);m3def(m3P,objectNormal);').replace('#include <begin_vertex>','vec3 transformed=m3P;')};
   m.customProgramCacheKey=()=>'m3'+D.url;return m}
-function dyeMat(m){if(!m)return;m.color&&m.color.set('#ffffff');m.onBeforeCompile=sh=>{sh.uniforms.uDye={value:new THREE.Color('#c8c8c8')};m.userData.sh=sh;sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uDye;').replace('#include <color_fragment>','#include <color_fragment>\n{vec3 src=diffuseColor.rgb;float mx=max(src.r,max(src.g,src.b));float mn=min(src.r,min(src.g,src.b));float skin=smoothstep(0.03,0.12,src.r-src.b)*smoothstep(0.28,0.62,src.r)*(1.0-smoothstep(0.28,0.55,mx-mn));float hair=smoothstep(0.26,0.07,mx);diffuseColor.rgb=mix(src*uDye*1.45,src,clamp(skin+hair,0.0,1.0));}')};m.needsUpdate=true}
+function dyeMat(m){if(!m)return;m.color&&m.color.set('#ffffff');if(m.emissive)m.emissive.setRGB(0,0,0);m.emissiveMap=null;if(m.metalness!=null){m.metalness=Math.min(m.metalness,0.25);m.roughness=Math.max(m.roughness,0.5)}m.onBeforeCompile=sh=>{sh.uniforms.uDye={value:new THREE.Color('#c8c8c8')};m.userData.sh=sh;sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uDye;').replace('#include <color_fragment>','#include <color_fragment>\n{vec3 src=diffuseColor.rgb;float mx=max(src.r,max(src.g,src.b));float mn=min(src.r,min(src.g,src.b));float skin=smoothstep(0.03,0.12,src.r-src.b)*smoothstep(0.28,0.62,src.r)*(1.0-smoothstep(0.28,0.55,mx-mn));float hair=smoothstep(0.26,0.07,mx);diffuseColor.rgb=mix(src*uDye*1.15,src,clamp(skin+hair,0.0,1.0));}')};m.needsUpdate=true}
 function heroDye(lk,gear){try{const L=heroLooks(lk,gear);const a=new THREE.Color((L.body&&L.body.c)||'#c4c4c4'),h=new THREE.Color((L.helm&&L.helm.c)||'#c4c4c4'),g=new THREE.Color((L.legs&&L.legs.c)||'#c4c4c4');return a.lerp(h,0.34).lerp(g,0.42)}catch(e){return new THREE.Color('#c4c4c4')}}
 function applyDye(m,col){if(m&&m.userData.sh)m.userData.sh.uniforms.uDye.value.copy(col)}
 function gripScythe(w,hand,off){const g=gripScythe.g||(gripScythe.g={r:new THREE.Vector3(),l:new THREE.Vector3(),d:new THREE.Vector3(),x:new THREE.Vector3(),z:new THREE.Vector3(),q:new THREE.Quaternion(),h:new THREE.Quaternion(),m:new THREE.Matrix4()});
@@ -7476,7 +7477,6 @@ function gripScythe(w,hand,off){const g=gripScythe.g||(gripScythe.g={r:new THREE
 function h3sync(g,t){
   if(!hero)return;
   const sex=S.look&&S.look.sex==='f'?'f':'m',key='hero_'+sex,A=M3[key];
-  if(!M3.holdB&&!M3.hold){M3.holdB=1;new THREE.GLTFLoader().load('models/hold.glb',gl=>{M3.hold=gl.animations&&gl.animations[0]},undefined,()=>{M3.holdB=2})}
   if(!M3.wepB&&!M3.wep){M3.wepB=1;new THREE.GLTFLoader().load('models/ashbringer.glb',gl=>{M3.wep=gl.scene},undefined,()=>{M3.wepB=2})}
   if(!use3D()||!A||!A.rig){hero.h3=0;if(!A&&MODEL3D[key])m3load(key);if(g.hero3){g.scene.remove(g.hero3.me);try{g.hero3.mix.stopAllAction()}catch(e){}g.hero3=null}return}
   const dtm=Math.min(0.1,t-(g.h3t||t));g.h3t=t;let o=g.hero3;
@@ -7484,19 +7484,20 @@ function h3sync(g,t){
     const me=THREE.SkeletonUtils.clone(A.scene);let hips=null,mat=null;me.traverse(b=>{if(b.isBone&&!hips&&/Hips/.test(b.name))hips=b;if(b.isMesh&&b.material){b.material=b.material.clone();dyeMat(b.material);mat=b.material}});
     const mix=new THREE.AnimationMixer(me),acts={};for(const n in A.clips)if(A.clips[n])acts[n]=mix.clipAction(A.clips[n]);
     g.scene.add(me);me.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(me);const Hh=Math.min(3,Math.max(0.4,(bb.max.y-bb.min.y)||1));
-    o=g.hero3={me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null,fit:0.82/Hh,y0:bb.min.y,mat}}
-  if(M3.hold&&!o.acts.hold)o.acts.hold=o.mix.clipAction(M3.hold);
+    o=g.hero3={Hh,me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null,fit:0.82/Hh,y0:bb.min.y,mat}}
+  // two-handed weapons: keep the weapon arm in its standing pose while the legs run, so the scythe doesn't flail
+  if(!o.arm&&A.clips&&A.clips.idle){const id=A.clips.idle,tr=id.tracks.filter(x=>/Right(Shoulder|Arm|ForeArm|Hand)/.test(x.name)&&/quaternion$/.test(x.name));o.arm=o.mix.clipAction(new THREE.AnimationClip('arm',id.duration,tr));o.arm.play();o.arm.setEffectiveWeight(0)}
   const dx=hero.x-o.px,dy=hero.y-o.py,sp=Math.hypot(dx,dy);o.px=hero.x;o.py=hero.y;
   const want=sp>0.35?Math.atan2(dx,dy):(hero.dir>0?Math.PI/2:-Math.PI/2);
   o.yaw+=(((want-o.yaw+Math.PI*3)%(Math.PI*2))-Math.PI)*0.22;
-  const scythe=!!(S.gear.weapon&&S.gear.weapon.wt==='scythe'&&o.acts.hold);
-  const st=scythe?'hold':((sp>0.35||hero.wa>0.3)?'run':'idle'),a=o.acts[st]||o.acts.idle;
+  const scythe=!!(S.gear.weapon&&S.gear.weapon.wt==='scythe');
+  if(o.arm)o.arm.setEffectiveWeight(scythe?6:0);const st=((sp>0.35||hero.wa>0.3)?'run':'idle'),a=o.acts[st]||o.acts.idle;
   if(a&&o.cur!==a){a.reset().fadeIn(0.12).play();if(o.cur)o.cur.fadeOut(0.12);o.cur=a}
   if(a&&st==='run')a.timeScale=Math.max(0.75,Math.min(1.5,(sp/Math.max(dtm,0.016))/80));
   o.mix.update(dtm);if(o.hips&&o.hip0)o.hips.position.copy(o.hip0);applyDye(o.mat,heroDye(S.look,S.gear));
-  if(scythe&&M3.wep){if(!o.wep){let hand=null,off=null;o.me.traverse(b=>{if(b.isBone&&/RightHand$/.test(b.name))hand=b;if(b.isBone&&/LeftHand$/.test(b.name))off=b});if(hand){const w=M3.wep.clone(true);hand.add(w);o.wep=w;o.hand=hand;o.off=off}}if(o.wep)o.wep.visible=true}
+  if(scythe&&M3.wep){if(!o.wep){let hand=null,off=null;o.me.traverse(b=>{if(b.isBone&&/RightHand$/.test(b.name))hand=b;if(b.isBone&&/LeftHand$/.test(b.name))off=b});if(hand){o.me.updateMatrixWorld(true);const ms=o.me.getWorldScale(new THREE.Vector3()).x||1,bh=new THREE.Box3().setFromObject(o.me,true),Hl=((bh.max.y-bh.min.y)||1)/ms,rel=hand.getWorldScale(new THREE.Vector3()).x/ms,m=Hl/1.7/rel;const w=M3.wep.clone(true),inner=new THREE.Group(),piv=new THREE.Group();w.position.set(0.23,-0.25,0);inner.add(w);inner.rotation.set(0,Math.PI,0.6,'YXZ');piv.add(inner);piv.scale.setScalar(1.55*m);piv.rotation.set(Math.PI,0,0);piv.position.set(0,0.08*m,0);hand.add(piv);o.wep=piv}}if(o.wep)o.wep.visible=true}
   else if(o.wep)o.wep.visible=false;
-  o.me.position.set(hero.x/T,-(o.y0||0)*o.fit,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(o.fit);o.me.updateMatrixWorld(true);if(o.wep&&o.wep.visible&&o.hand&&o.off)gripScythe(o.wep,o.hand,o.off);o.me.visible=true;hero.h3=1}
+  o.me.position.set(hero.x/T,-(o.y0||0)*o.fit,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(o.fit);o.me.updateMatrixWorld(true);o.me.visible=true;hero.h3=1}
 function m3sync(g,t){const live=new Set();g.m3=g.m3||new Map();
   try{h3sync(g,t)}catch(e){if(hero)hero.h3=0}
   const dtm=Math.min(0.1,t-(g.m3t||t));g.m3t=t;
@@ -7587,7 +7588,7 @@ function render3D(t){const g=G3||g3init();if(!g)return null;
   const fov=g.cam3.fov*Math.PI/180,tw=W/(T*Z)*1.12,D=Math.max(6,tw/g.cam3.aspect/(2*Math.tan(fov/2))),pit=0.86;
   const tx=cam.x/T+sx,tz=cam.y/T+sz,vh=2*D*Math.tan(fov/2);
   g.cam3.position.set(tx,D*Math.sin(pit),tz+D*Math.cos(pit));g.cam3.lookAt(tx,0,tz-vh*0.1/Math.sin(pit));g.cam3.updateMatrixWorld();
-  g.hl.position.set(hero.x/T,1.7,hero.y/T+0.4);g.hl.intensity=26*(0.94+0.06*Math.sin(t*11)+0.03*Math.sin(t*23));
+  g.hl.position.set(hero.x/T,3.4,hero.y/T+1.1);g.hl.intensity=34*(0.94+0.06*Math.sin(t*11)+0.03*Math.sin(t*23));
   const hx=hero.x/T,hz=hero.y/T,L=(g.lights||[]).map(l=>[Math.hypot(l.x-hx,l.z-hz),l]).sort((a,b)=>a[0]-b[0]);
   g.tl.forEach((l,i)=>{const e=L[i];if(!e||e[0]>14){l.intensity=0;return}const o=e[1];l.position.set(o.x,o.y,o.z);l.color.copy(o.c);l.intensity=(o.lava?10:16)*(0.8+0.14*Math.sin(t*(o.lava?2:7)+o.seed)+0.06*Math.sin(t*13+o.seed*2))});
   try{m3sync(g,t)}catch(e){reportErr(e,'m3')}
