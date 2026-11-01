@@ -2,6 +2,11 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.36 | Male and female heroes | Nov 1, 2026
+- New heroes pick a name and a male or female body before entering the dungeon
+- The 3D hero in the dungeon is now that body. Change it any time under Customize look
+- Armor still shows on your paper doll. 3D armor pieces come next
+
 ## v1.35 | 3D pet pictures | Nov 1, 2026
 - The pet menu now shows every pet as its 3D model, the same one that follows you around
 

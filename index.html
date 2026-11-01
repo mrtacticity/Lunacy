@@ -4609,6 +4609,7 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.36','Nov 1, 2026','Male and female heroes',["New heroes pick a name and a male or female body before entering the dungeon","The 3D hero in the dungeon is now that body. Change it any time under Customize look","Armor still shows on your paper doll. 3D armor pieces come next"]],
  ['1.35','Nov 1, 2026','3D pet pictures',["The pet menu now shows every pet as its 3D model, the same one that follows you around"]],
  ['1.34','Nov 1, 2026','3D pets',["Pets are now 3D! All 32 pets are real 3D models that follow you around the dungeon and raids, and look at you when you stop", "Each pet moves its own way: pups and hounds trot, the griffin and whelp prowl, Batling Vey flaps, Pearlfin swims, Weaveling scuttles, Lil' Leviathan slithers, wisps, moons and stars float and glow, and the little ones hop along behind you"]],
  ['1.33','Nov 1, 2026','3D for everyone',["3D is now the main view for everyone, no longer a beta. Every dungeon, monster and raid is in 3D", "Older phones: the game first lowers 3D detail to keep things smooth. If a device still can't keep up, or can't run 3D at all, it uses the 2D view by itself", "Graphics \u2192 Smooth now keeps 3D but turns off glow and lowers detail", "The Explore, 3D and Classic choice has been removed from Settings"]],
@@ -4762,7 +4763,7 @@ function fresh(){
     sh:{might:0,ward:0,fortune:0,wisdom:0,moonstep:0,mastery:0},
     gear:{weapon:mkItem('weapon',0,0,{exact:1,wt:'sword'}),helm:mkItem('helm',0,0,{exact:1}),body:mkItem('body',0,0,{exact:1}),legs:mkItem('legs',0,0,{exact:1}),shield:mkItem('shield',0,0,{exact:1}),amulet:mkItem('amulet',0,0,{exact:1})},
     bag:[],uniq:{},pets:{},petOn:null,
-    look:{build:0,skin:1,hair:1,hairC:1,beard:false,cape:'#2f3d78',special:null,hideHelm:false,ov:{}},
+    look:{build:0,sex:'m',skin:1,hair:1,hairC:1,beard:false,cape:'#2f3d78',special:null,hideHelm:false,ov:{}},
     looks:{},
     kills:0,bosses:0,chests:0,superiors:0,rebirths:0,playSec:0,
     pass:{tier:0,until:0,claim:''},boost:{gold:0,xp:0},daily:null,
@@ -7132,7 +7133,7 @@ function drawMob(m,t){const fade=m.dead>0?m.dead/0.5:1;const k=m.atk?m.atk.t/m.a
     if(m.hp<m.maxHp||m.sup){ctx.fillStyle='#000a';ctx.fillRect(m.x-22,m.y-m.h-12,44,5);ctx.fillStyle=m.sup?'#ffd36e':'#c8323c';ctx.fillRect(m.x-22,m.y-m.h-12,44*Math.max(0,m.hp)/m.maxHp,5)}}
   if(k>=0&&k<0.5&&m.dead<=0){ctx.textAlign='center';ctx.font='800 22px Cinzel, Georgia, serif';ctx.fillStyle=m.atk.heavy?'#ff5a3c':'#ffb08a';ctx.shadowColor='#ff5a3c';ctx.shadowBlur=12;ctx.fillText('!',m.x,m.y-m.h-(m.kind==='mob'?24:16));
     if(m.atk.heavy){const A=MATK[m.arch];if(A){ctx.font='800 11px "Alegreya Sans", system-ui, sans-serif';ctx.fillStyle='#ffd0c0';ctx.fillText((m.kind==='mob'?A.heavy:A.boss).toUpperCase(),m.x,m.y-m.h-44)}}ctx.shadowBlur=0}}
-function drawHeroEx(t){const h=hero,st=C.style;ctx.fillStyle='rgba(0,0,0,.45)';ctx.beginPath();ctx.ellipse(h.x,h.y+1,24,7,0,0,TAU);ctx.fill();
+function drawHeroEx(t){const h=hero,st=C.style;if(h.h3&&G3&&use3D()){ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(h.x,h.y+1,18,6,0,0,TAU);ctx.fill();return}ctx.fillStyle='rgba(0,0,0,.45)';ctx.beginPath();ctx.ellipse(h.x,h.y+1,24,7,0,0,TAU);ctx.fill();
   const k=h.atk?h.atk.t/h.atk.dur:-1;const draw=st!=='melee'?(k>=0&&k<0.55?k/0.55:0.25):0.3;
   const X=PH.ok()&&!lowGfx()&&GL&&!RIGNOGL?heroLooks(S.look,S.gear):null;const hb=X&&PH.bodyCanvas(X,S.look);const hk=hb&&heroRig(hb.k);
   if(hk){const o=hb.o,sc=0.95;ctx.save();ctx.translate(h.x,h.y);PH.aura(ctx,{aura:S.asc},t,X.body);ctx.restore();
@@ -7335,6 +7336,9 @@ const PET3D={p0:{style:'quad',rot:1,legH:0.4,stride:0.4},p1:{style:'crawl'},p2:{
  mpet:{style:'hop',rot:1},ash:{style:'quad',legH:0.35,wings:1,stride:0.35},mole:{style:'hop',rot:1},otter:{style:'hop'},imp:{style:'hop',rot:1},sprig:{style:'hop',rot:1},slay:{style:'quad',rot:1,legH:0.42,stride:0.4},hmwisp:{style:'float',glow:0.8,hover:0.5}};
 for(const k in PET3D)MODEL3D['pet_'+k]=Object.assign({url:'models/pets/'+k+'.glb',pet:1},PET3D[k]);
 for(const k in MODEL3D){const D=MODEL3D[k];D.url=D.url||('models/'+k+'.glb');Object.assign(D,Object.assign({},M3S[D.style]||{},D))}
+MODEL3D.hero_m={url:'models/hero/male.glb',style:'biped',hero:1};
+MODEL3D.hero_f={url:'models/hero/female.glb',style:'biped',hero:1};
+for(const k of ['hero_m','hero_f']){const D=MODEL3D[k];Object.assign(D,Object.assign({},M3S.biped,D))}
 const M3={};let PET3=null;
 // shared monster bodies take on each dungeon's colour, like the painted ones do
 const M3TINT=new Set(['skeleton','ghoul','wraith','beast','golem','demon','dragon']);
@@ -7455,7 +7459,26 @@ void m3def(inout vec3 P,inout vec3 N){vec3 p=P;
   if(uDie>0.){${flyer?'P.y-=uDie*0.35;mat3 Dm=rX(uDie*0.6);P=Dm*P;N=Dm*N;':D.style==='anchor'?'P.y-=uDie*0.5;':'mat3 Dm=rZ(uDie*1.45);P=Dm*P;N=Dm*N;P.y-=uDie*0.05;'}}}
 `+sh.vertexShader.replace('#include <beginnormal_vertex>','vec3 objectNormal=vec3(normal);vec3 m3P=vec3(position);m3def(m3P,objectNormal);').replace('#include <begin_vertex>','vec3 transformed=m3P;')};
   m.customProgramCacheKey=()=>'m3'+D.url;return m}
+function h3sync(g,t){
+  if(!hero)return;
+  const sex=S.look&&S.look.sex==='f'?'f':'m',key='hero_'+sex,A=M3[key];
+  if(!use3D()||!A||!A.rig){hero.h3=0;if(!A&&MODEL3D[key])m3load(key);if(g.hero3){g.scene.remove(g.hero3.me);try{g.hero3.mix.stopAllAction()}catch(e){}g.hero3=null}return}
+  const dtm=Math.min(0.1,t-(g.h3t||t));g.h3t=t;let o=g.hero3;
+  if(!o||o.sex!==sex){if(o){g.scene.remove(o.me);try{o.mix.stopAllAction()}catch(e){}}
+    const me=THREE.SkeletonUtils.clone(A.scene);let hips=null;me.traverse(b=>{if(b.isBone&&!hips&&/Hips/.test(b.name))hips=b;if(b.isMesh&&b.material)b.material=b.material.clone()});
+    const mix=new THREE.AnimationMixer(me),acts={};for(const n in A.clips)if(A.clips[n])acts[n]=mix.clipAction(A.clips[n]);
+    g.scene.add(me);o=g.hero3={me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null}}
+  const dx=hero.x-o.px,dy=hero.y-o.py,sp=Math.hypot(dx,dy);o.px=hero.x;o.py=hero.y;
+  const want=sp>0.35?Math.atan2(dx,dy):(hero.dir>0?Math.PI/2:-Math.PI/2);
+  o.yaw+=(((want-o.yaw+Math.PI*3)%(Math.PI*2))-Math.PI)*0.22;
+  const st=(sp>0.35||hero.wa>0.3)?'run':'idle',a=o.acts[st]||o.acts.idle;
+  if(a&&o.cur!==a){a.reset().fadeIn(0.12).play();if(o.cur)o.cur.fadeOut(0.12);o.cur=a}
+  if(a&&st==='run')a.timeScale=Math.max(0.75,Math.min(1.5,(sp/Math.max(dtm,0.016))/80));
+  o.mix.update(dtm);if(o.hips&&o.hip0)o.hips.position.copy(o.hip0);
+  const hs=112/T*0.86/(A.H||1);
+  o.me.position.set(hero.x/T,-(A.y0||0)*hs,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(hs);o.me.visible=true;hero.h3=1}
 function m3sync(g,t){const live=new Set();g.m3=g.m3||new Map();
+  try{h3sync(g,t)}catch(e){if(hero)hero.h3=0}
   const dtm=Math.min(0.1,t-(g.m3t||t));g.m3t=t;
   const pk=hero&&S.petOn&&S.pets&&S.pets[S.petOn]&&MODEL3D['pet_'+S.petOn]?S.petOn:null;
   if(pk){const tx=hero.x-hero.dir*46,ty=hero.y+8;if(!PET3||PET3.k!==pk||Math.hypot(PET3.x-tx,PET3.y-ty)>T*6)PET3={k:pk,arch:'pet_'+pk,x:tx,y:ty,h:70,dead:0,kind:'pet',born:0,dir:1,wa:0};
@@ -9102,6 +9125,7 @@ function openCreator(){
   openModal(`<div class="shead"><h2>Your character</h2><button class="x" data-act="close" aria-label="Close">×</button></div>
    <div class="creator"><canvas id="ccv" width="300" height="430"></canvas>
     <div class="cctrl">
+     <div class="field"><label>Body</label><div class="chips"><button class="chip" data-cc="sex" data-v="m" aria-pressed="${draft.sex!=='f'}">Male</button><button class="chip" data-cc="sex" data-v="f" aria-pressed="${draft.sex==='f'}">Female</button></div><div class="muted" style="font-size:12.5px">This is the 3D hero in the dungeon. Armor is still on the paper doll until those pieces are added.</div></div>
      ${PH.ok()?`<div class="field"><label>Cape</label><div class="swatches">${CAPES.map(c=>`<button class="swatch" style="background:${c}" data-cc="cape" data-v="${c}" aria-pressed="${!draft.special&&draft.cape===c}" aria-label="Cape colour"></button>`).join('')}</div><div class="chips">${specials}</div></div><div class="muted" style="font-size:12.5px">Your armour comes from what you wear. Change how it looks with Cosmetic override below.</div>`:`<div class="field"><label>Build</label><div class="chips">${['Lean','Broad'].map((n,i)=>`<button class="chip" data-cc="build" data-v="${i}" aria-pressed="${draft.build===i}">${n}</button>`).join('')}</div></div>
      <div class="field"><label>Skin</label><div class="swatches">${SKIN.map((c,i)=>`<button class="swatch" style="background:${c}" data-cc="skin" data-v="${i}" aria-pressed="${draft.skin===i}" aria-label="Skin ${i+1}"></button>`).join('')}</div></div>
      <div class="field"><label>Hair</label><div class="chips">${HAIRS.map((n,i)=>`<button class="chip" data-cc="hair" data-v="${i}" aria-pressed="${draft.hair===i}">${n}</button>`).join('')}</div></div>`}
@@ -9294,6 +9318,8 @@ function act(a,el){
   case 'settitle':if(S.titles.includes(k)){S.title=k;closeModal();openProfile()}return;
   case 'a_ladder':S.supporter=!S.supporter;lb.ladder=null;toast(S.supporter?'Moved to Supporter ladder':'Moved to Free-to-Play ladder');break;
   case 'savename':{const n=$('#pName').value.trim().slice(0,16);if(n)S.name=n;closeModal();toast('Name saved');break}
+  case 'sex':{S.look.sex=v==='f'?'f':'m';document.querySelectorAll('[data-act="sex"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.look.sex));save();return}
+  case 'begin':{const n=($('#wName')&&$('#wName').value.trim().slice(0,16))||'';if(n)S.name=n;if(S.look.sex!=='f')S.look.sex='m';closeModal();save();toast('Welcome, '+S.name);break}
   case 'openadmin':closeModal();show('admin');return;
   case 'adminin':{if($('#aCode').value==='moonrise'){S.admin=true;closeModal();show('admin');toast('Admin unlocked')}else $('#aErr').textContent='That code is not right.';return}
   case 'savelook':S.look=draft;closeModal();toast('Character saved');if(tab==='gear')show('gear');return;
@@ -9321,6 +9347,7 @@ function onClick(e){
   if(cc&&draft){const key=cc.dataset.cc;
     if(key==='beard'||key==='hideHelm'){draft[key]=!draft[key];cc.setAttribute('aria-pressed',draft[key])}
     else if(key==='special'){draft.special=draft.special===cc.dataset.v?null:cc.dataset.v;cc.parentElement.querySelectorAll('[data-cc="special"]').forEach(b=>b.setAttribute('aria-pressed',draft.special===b.dataset.v))}
+    else if(key==='sex'){draft.sex=cc.dataset.v==='f'?'f':'m';document.querySelectorAll('[data-cc="sex"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===draft.sex))}
     else{const v=key==='cape'?cc.dataset.v:+cc.dataset.v;draft[key]=v;if(key==='cape')draft.special=null;
       document.querySelectorAll(`[data-cc="${key}"]`).forEach(b=>b.setAttribute('aria-pressed',b===cc));
       if(key==='cape')document.querySelectorAll('[data-cc="special"]').forEach(b=>b.setAttribute('aria-pressed','false'))}
@@ -9408,11 +9435,11 @@ function boot(data){
   buildNav();show('dungeon');updateTop();updateEvBar();resize();
   if(had){const away=(Date.now()-S.lastSeen)/1000;const r=applyOffline(away);if(r)showOffline(r)}
   else{
-    openModal(`<div class="shead"><h2>Welcome to Lunacy Depths</h2><button class="x" data-act="close" aria-label="Close">×</button></div>
-     <p style="margin:0">Fourteen dungeons, 700 floors, and an endless abyss below. Your hero fights on their own, even while you're away.</p>
-     <div class="kv"><span>Every floor</span><span>6 fights, then a chest</span><span>Every 10 floors</span><span>A mini-boss</span><span>Every 50 floors</span><span>A dungeon boss</span><span>Rare set pieces</span><span>1/100 per run</span><span>Legendary weapons</span><span>1/1,000 per run</span><span>Pets</span><span>1/3,000 per run</span></div>
-     <div class="note">Tap the battle to strike. When a monster shows <b style="color:#ff5a3c">!</b>, hit <b>Block</b> to counter. Fill your energy and fire your <b>Special</b>. Throw a <b>Moonfire Flask</b> to break walls.</div>
-     <div class="grid2"><button class="btn" data-act="creator">Create character</button><button class="btn pri" data-act="close">Start</button></div>`);
+    openModal(`<div class="shead"><h2>Welcome to Lunacy Depths</h2></div>
+     <p style="margin:0">Your hero keeps fighting while the app is closed. Pick who walks the depths. You can change this later.</p>
+     <div class="field"><label for="wName">Hero name</label><input id="wName" maxlength="16" value="${esc(S.name||'Adventurer')}" autocomplete="off"></div>
+     <div class="field"><label>Body</label><div class="chips"><button class="chip" data-act="sex" data-v="m" aria-pressed="${S.look.sex!=='f'}">Male</button><button class="chip" data-act="sex" data-v="f" aria-pressed="${S.look.sex==='f'}">Female</button></div></div>
+     <button class="btn pri" data-act="begin">Enter the depths</button>`);
   }
   window.claude?.hot?.snapshot?.(()=>({S}));
   requestAnimationFrame(t=>{last=t;requestAnimationFrame(frame)});
