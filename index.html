@@ -174,30 +174,6 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
-
-
-<title>Lunacy Depths</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
-
-
-<title>Lunacy Depths</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
-
-
-<title>Lunacy Depths</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
-
-
-<title>Lunacy Depths</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
 <style>
 /* Layout: one-screen phone game. Top bar, battle stage canvas, scrolling tab panel, bottom nav. Deliberately dark-only (night dungeon). */
 :root{
@@ -4561,7 +4537,6 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
- ['1.32','Nov 1, 2026','3D raids',["Raids are now in 3D too: the Hollow Court, Ash, Gilded Gallery, Sanctum and Abyssal Maw arenas are built in 3D with real stone pillars, and every raid boss and minion is a 3D model", "Raid danger zones (cones, beams, arrow rain, star orbs, tentacle slams and the tide) now glow on the 3D arena floor so you can see where to step", "Fixed monster legs glitching: many models were walking sideways inside their own bodies. Every monster now faces the way it walks and only its real legs move, so swords, capes and tails no longer get dragged around", "The Hungry Tome now chomps properly instead of bending in half", "Werewolves now run on two legs, and the Giant Plague Rat scurries with a wagging tail", "Long monsters like hounds, krakens and the Rot King are no longer shrunk as much"]],
  ['1.31','Nov 1, 2026','3D monsters',["3D view (beta): almost every monster is now a real 3D model, 48 in total, across all 14 dungeons", "Each kind moves its own way: skeletons and knights march, golems stomp, beasts and rats run on four legs, crawlers and crabs scuttle, serpents slither, angels and flies flap, wraiths and robed casters drift, books snap and orbs spin", "Monsters that appear in more than one dungeon take on that dungeon's colours", "Still to come in 3D: spiders, the Mother of Rats, the Eclipse Reaper, the Angler Brute, and raids"]],
  ['1.29','Oct 31, 2026','Glowing jellyfish',["3D view (beta): the Jelly Wraiths of the Abyssal Trench are now glowing 3D jellyfish that float, pulse and trail their tentacles"]],
  ['1.28','Oct 31, 2026','First 3D monster',["3D view (beta): monsters are starting to become real 3D models. First up: the Rotting Abomination in Plaguehollow, which now runs, lunges at you and falls when it dies", "More 3D monsters are coming"]],
@@ -7039,17 +7014,17 @@ function hazBoom(z){const col=z.col||'#ff3a2a',n=z.k==='room'?36:14;for(let i=0;
   if(z.k==='circle'){x=z.x+rnd(-z.r,z.r);y=z.y+rnd(-z.r*0.5,z.r*0.5)}else if(z.k==='line'){const t=Math.random();x=z.x1+(z.x2-z.x1)*t;y=z.y1+(z.y2-z.y1)*t}
   else if(z.k==='rect'){x=z.rx+Math.random()*z.rw;y=z.ry+Math.random()*z.rh}else if(z.k==='cone'){const a=z.ang+rnd(-z.spread/2,z.spread/2),r=rnd(30,z.r);x=z.x+Math.cos(a)*r;y=z.y+Math.sin(a)*r}
   else{x=hero.x+rnd(-420,420);y=hero.y+rnd(-260,260)}fx.push({x,y,vx:rnd(-40,40),vy:rnd(-150,-40),t:0,life:0.6,c:col})}}
-function drawHaz(c=ctx,flat){for(const z of haz){const k=Math.min(1,z.t/z.max),col=z.col||'#ff3a2a',done=z.t>=z.max,a=done?Math.max(0,1-(z.t-z.max)/0.35)*0.65:0.1+0.2*k;
-  c.save();c.fillStyle=rgba(col,a);c.strokeStyle=rgba(col,done?a:0.9);c.lineWidth=3;
-  if(z.k==='circle'){c.translate(z.x,z.y);c.scale(1,1/1.6);c.beginPath();c.arc(0,0,z.r,0,TAU);c.fill();c.stroke();if(!done){c.fillStyle=rgba(col,0.32);c.beginPath();c.arc(0,0,z.r*k,0,TAU);c.fill()}}
-  else if(z.k==='line'){const ang=Math.atan2(z.y2-z.y1,z.x2-z.x1),L=Math.hypot(z.x2-z.x1,z.y2-z.y1);c.translate(z.x1,z.y1);c.rotate(ang);c.fillRect(0,-z.w/2,L,z.w);c.strokeRect(0,-z.w/2,L,z.w);if(!done){c.fillStyle=rgba(col,0.32);c.fillRect(0,-z.w/2*k,L,z.w*k)}}
-  else if(z.k==='rect'){c.fillRect(z.rx,z.ry,z.rw,z.rh);c.strokeRect(z.rx,z.ry,z.rw,z.rh);if(!done){c.fillStyle=rgba(col,0.28);const hh=z.rh*k;c.fillRect(z.rx,z.ry+z.rh-hh,z.rw,hh)}}
-  else if(z.k==='cone'){c.translate(z.x,z.y);c.scale(1,1);c.beginPath();c.moveTo(0,0);c.arc(0,0,z.r,z.ang-z.spread/2,z.ang+z.spread/2);c.closePath();c.fill();c.stroke();if(!done){c.fillStyle=rgba(col,0.32);c.beginPath();c.moveTo(0,0);c.arc(0,0,z.r*k,z.ang-z.spread/2,z.ang+z.spread/2);c.closePath();c.fill()}}
-  else if(z.k==='room'){const A=RA.A;c.fillRect(A.L,A.Tp,A.R-A.L,A.Bt-A.Tp);if(!done){c.fillStyle='rgba(120,255,160,.3)';c.strokeStyle='rgba(150,255,180,.9)';c.lineWidth=2;
+function drawHaz(){for(const z of haz){const k=Math.min(1,z.t/z.max),col=z.col||'#ff3a2a',done=z.t>=z.max,a=done?Math.max(0,1-(z.t-z.max)/0.35)*0.65:0.1+0.2*k;
+  ctx.save();ctx.fillStyle=rgba(col,a);ctx.strokeStyle=rgba(col,done?a:0.9);ctx.lineWidth=3;
+  if(z.k==='circle'){ctx.translate(z.x,z.y);ctx.scale(1,1/1.6);ctx.beginPath();ctx.arc(0,0,z.r,0,TAU);ctx.fill();ctx.stroke();if(!done){ctx.fillStyle=rgba(col,0.32);ctx.beginPath();ctx.arc(0,0,z.r*k,0,TAU);ctx.fill()}}
+  else if(z.k==='line'){const ang=Math.atan2(z.y2-z.y1,z.x2-z.x1),L=Math.hypot(z.x2-z.x1,z.y2-z.y1);ctx.translate(z.x1,z.y1);ctx.rotate(ang);ctx.fillRect(0,-z.w/2,L,z.w);ctx.strokeRect(0,-z.w/2,L,z.w);if(!done){ctx.fillStyle=rgba(col,0.32);ctx.fillRect(0,-z.w/2*k,L,z.w*k)}}
+  else if(z.k==='rect'){ctx.fillRect(z.rx,z.ry,z.rw,z.rh);ctx.strokeRect(z.rx,z.ry,z.rw,z.rh);if(!done){ctx.fillStyle=rgba(col,0.28);const hh=z.rh*k;ctx.fillRect(z.rx,z.ry+z.rh-hh,z.rw,hh)}}
+  else if(z.k==='cone'){ctx.translate(z.x,z.y);ctx.scale(1,1);ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,z.r,z.ang-z.spread/2,z.ang+z.spread/2);ctx.closePath();ctx.fill();ctx.stroke();if(!done){ctx.fillStyle=rgba(col,0.32);ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,z.r*k,z.ang-z.spread/2,z.ang+z.spread/2);ctx.closePath();ctx.fill()}}
+  else if(z.k==='room'){const A=RA.A;ctx.fillRect(A.L,A.Tp,A.R-A.L,A.Bt-A.Tp);if(!done){ctx.fillStyle='rgba(120,255,160,.3)';ctx.strokeStyle='rgba(150,255,180,.9)';ctx.lineWidth=2;
     for(const q of props){if(!q.pillar)continue;const ux=q.x-z.bx,uy=q.y-z.by,ul=Math.hypot(ux,uy)||1,dx=ux/ul,dy=uy/ul,nx=-dy,ny=dx,w0=T*0.6,w1=w0+440*0.17;
-      c.beginPath();c.moveTo(q.x+nx*w0,q.y+ny*w0);c.lineTo(q.x+dx*440+nx*w1,q.y+dy*440+ny*w1);c.lineTo(q.x+dx*440-nx*w1,q.y+dy*440-ny*w1);c.lineTo(q.x-nx*w0,q.y-ny*w0);c.closePath();c.fill();c.stroke()}
-    if(!flat){c.font='800 22px Cinzel, Georgia, serif';c.textAlign='center';c.fillStyle='#eaffef';c.fillText('HIDE BEHIND A PILLAR',hero.x,hero.y-150)}}}
-  c.restore()}}
+      ctx.beginPath();ctx.moveTo(q.x+nx*w0,q.y+ny*w0);ctx.lineTo(q.x+dx*440+nx*w1,q.y+dy*440+ny*w1);ctx.lineTo(q.x+dx*440-nx*w1,q.y+dy*440-ny*w1);ctx.lineTo(q.x-nx*w0,q.y-ny*w0);ctx.closePath();ctx.fill();ctx.stroke()}
+    ctx.font='800 22px Cinzel, Georgia, serif';ctx.textAlign='center';ctx.fillStyle='#eaffef';ctx.fillText('HIDE BEHIND A PILLAR',hero.x,hero.y-150)}}
+  ctx.restore()}}
 function drawRaidBar(){if(!RA||!RA.boss)return;const b=RA.boss,R=RA.R,RD=RAIDS[R.id],w2=Math.min(W*0.86,460),x=(W-w2)/2,y=H-214;
   ctx.save();ctx.font='700 15px Cinzel, Georgia, serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillStyle=RD.tint;ctx.shadowColor='#000';ctx.shadowBlur=6;ctx.fillText(b.name+(b.immune?' · shielded':''),W/2,y-4);ctx.shadowBlur=0;
   ctx.fillStyle='#000c';ctx.beginPath();ctx.roundRect(x,y,w2,12,6);ctx.fill();ctx.fillStyle=b.immune?'#7a84a0':'#c8323c';ctx.beginPath();ctx.roundRect(x+1,y+1,Math.max(0,(w2-2)*clamp(b.hp/b.maxHp,0,1)),10,5);ctx.fill();
@@ -7133,7 +7108,7 @@ function render(){
     ctx.rotate(t*0.3);ctx.strokeStyle=rgba(BIO.accent,0.45);ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<6;i++){const q=i*TAU*2/6;ctx.lineTo(Math.cos(q)*60,Math.sin(q)*60)}ctx.closePath();ctx.stroke();ctx.restore()}
   if(portal){PL(portal.x,portal.y);ctx.save();ctx.translate(portal.x,portal.y);ctx.scale(1,0.45);ctx.globalCompositeOperation='lighter';for(let i=0;i<4;i++){ctx.strokeStyle=rgba(BIO.accent,0.6-i*0.12);ctx.lineWidth=5-i;ctx.beginPath();ctx.arc(0,0,26+i*8,t*3+i,t*3+i+4.5);ctx.stroke()}const g=ctx.createRadialGradient(0,0,0,0,0,40);g.addColorStop(0,'rgba(255,255,255,.8)');g.addColorStop(0.4,rgba(BIO.accent,0.5));g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,40,0,TAU);ctx.fill();ctx.restore()}
   for(const c of circles){const k=Math.min(1,c.t/c.max);PL(c.x,c.y);ctx.save();ctx.translate(c.x,c.y);ctx.scale(1,0.55);ctx.fillStyle=`rgba(255,50,30,${0.12+0.1*k})`;ctx.beginPath();ctx.arc(0,0,c.r,0,TAU);ctx.fill();ctx.strokeStyle='rgba(255,80,50,.8)';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='rgba(255,90,40,.35)';ctx.beginPath();ctx.arc(0,0,c.r*k,0,TAU);ctx.fill();ctx.restore()}
-  if(RA&&!g3)drawHaz();
+  if(RA)drawHaz();
   for(const c of coins){PL(c.x,c.y);ctx.fillStyle='#e8b85a';ctx.strokeStyle='#6a4a10';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(c.x,c.y-4-Math.abs(Math.sin(c.t*6))*3,5,4,0,0,TAU);ctx.fill();ctx.stroke()}
   const vis=g3?g3.vis:(x,y,pad)=>x*Z+ox>-pad&&x*Z+ox<W+pad&&y*Z+oy>-pad&&y*Z+oy<H+pad*2;
   const list=[];for(const p of props)if(vis(p.x,p.y,180))list.push([p.y,0,p]);for(const m of mobs)if(vis(m.x,m.y,260))list.push([m.y,1,m]);list.push([hero.y,2,hero]);
@@ -7158,7 +7133,6 @@ function render(){
   {const f=$('#hHpF'),pc=clamp(B.php/C.maxHp,0,1);if(f){f.style.width=(pc*100).toFixed(1)+'%';const tx=`${S.name} · ${fmt(Math.max(0,B.php))}`;if(render._hp!==tx){render._hp=tx;$('#hHpT').textContent=tx}}}
   if(guard&&guard.dead<=0&&Math.hypot(guard.x-hero.x,guard.y-hero.y)<560){const w2=Math.min(W*0.8,420),x=(W-w2)/2,y=H-210;ctx.font='700 15px Cinzel, Georgia, serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillStyle=guard.kind==='boss'?'#ffb0a0':'#ffe08a';ctx.shadowColor='#000';ctx.shadowBlur=8;ctx.fillText(guard.name,W/2,y-4);ctx.shadowBlur=0;
     ctx.fillStyle='#000b';ctx.beginPath();ctx.roundRect(x,y,w2,10,5);ctx.fill();const gr=ctx.createLinearGradient(x,0,x+w2,0);gr.addColorStop(0,'#c8323c');gr.addColorStop(1,'#ff6a3c');ctx.fillStyle=gr;ctx.beginPath();ctx.roundRect(x+1,y+1,Math.max(0,(w2-2)*guard.hp/guard.maxHp),8,4);ctx.fill()}
-  if(g3&&RA&&haz.some(z=>z.k==='room'&&z.t<z.max)){const q=PJ(hero.x,hero.y);ctx.save();ctx.font='800 22px Cinzel, Georgia, serif';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#000';ctx.strokeText('HIDE BEHIND A PILLAR',q.sx,q.sy-150*q.k);ctx.fillStyle='#eaffef';ctx.fillText('HIDE BEHIND A PILLAR',q.sx,q.sy-150*q.k);ctx.restore()}
   drawRaidBar();
   if(B.specFx){const a=Math.min(1,B.specFx.t/0.3);ctx.save();ctx.globalAlpha=a;ctx.font='800 17px Cinzel, Georgia, serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#e8eeff';ctx.shadowColor='#7d9cf0';ctx.shadowBlur=16;ctx.fillText(B.specFx.n.toUpperCase(),W/2,hy-90-(1.1-B.specFx.t)*10);ctx.restore()}
   // map
@@ -7174,7 +7148,7 @@ function render(){
 }
 /* ---------- 3D view (beta): the dungeon is built in real 3D, the painted characters stand in it ---------- */
 const NOP3=()=>{};let G3=null,G3fail=false,G3pre=null;
-const use3D=()=>S.view==='3d'&&!G3fail;
+const use3D=()=>S.view==='3d'&&!RA&&!G3fail;
 function three(){if(window.THREE)return true;try{const el=document.getElementById('threeSrc');if(!el)return false;(0,eval)(el.textContent);el.textContent='';return !!window.THREE}catch(e){reportErr(e,'3d load');return false}}
 function lavaFog(){return BIO.fx==='ember'?0x0a0302:0x030305}
 function g3init(){
@@ -7246,7 +7220,7 @@ function g3kit(Wg,bx0,by0,bx1,by1){const g=G3,fl=(X,Y)=>Y>=0&&X>=0&&Y<MH&&X<MW&&
   for(const p of props){const x=p.x/T,z=p.y/T;
     if(p.torch){p.k3=1;const zz=Math.round(z);put('torch_mounted',x,WH*0.5,zz+0.12,0,0.32,0.32,0.32);flames.push([x,WH*0.5+0.22,zz+0.26]);lights.push({x,y:WH*0.55,z:zz+0.55,c:new THREE.Color(BIO.accent||'#ffb060').lerp(new THREE.Color('#ffb060'),0.5),seed:p.seed||0});continue}
     if(p.chest){p.k3=1;put(bossRoom&&Math.hypot(p.x/T-bossRoom.cx,p.y/T-bossRoom.cy)<4?'chest_gold':'chest',x,0,z-0.1,0,0.32,0.32,0.32);continue}
-    if(p.pillar){p.k3=1;put('pillar_decorated',x,0,z-0.12,0,0.36,SY*1.15,0.36);continue}
+    if(p.pillar){continue}
     p.k3=1;const k=pv[Math.floor(H(x,z,3)*pv.length)];const sc=k==='pillar_decorated'?0.24:k==='rubble_half'?0.2:0.3;put(k,x,0,z-0.15,H(x,z,4)*Math.PI*2,sc,k==='pillar_decorated'?SY:sc,sc);
     if(H(x,z,11)<0.25)put('candle_triple',x+0.3,0,z+0.15,0,0.35,0.35,0.35)}
   for(const key in I){const [k,mk]=key.split('|'),L=I[key];for(const part of KIT[k]){const im=new THREE.InstancedMesh(part.geo,M[mk],L.length);L.forEach((m,i)=>im.setMatrixAt(i,m));Wg.add(im)}}
@@ -7267,15 +7241,15 @@ const M3S={biped:{hip:0.47,knee:0.24,sh:0.79,armX:0.25,legX:0.2,stride:0.5},heav
   quad:{legH:0.42,stride:0.45},crawl:{legH:0.4},crab:{legH:0.45,face:Math.PI/2},serpent:{},wing:{hover:0.35,wingX:0.2},float:{hover:0.18},robe:{hover:0.06},
   spin:{hover:0.45},book:{hover:0.38},anchor:{},swim:{hover:0.45}};
 const MODEL3D={
- skeleton:{style:'biped',rot:1},ghoul:{style:'biped',stride:0.45},demon:{style:'biped',rot:1,sh:0.74},abom:{style:'biped',rot:1,hip:0.47,armX:0.27,legX:0.22},butcher:{style:'biped',rot:1},pdoc:{style:'biped',rot:1},
- dknight:{style:'biped'},diver:{style:'biped',rot:1},gduel:{style:'biped',rot:1,stride:0.32,legX:0.27},gmirror:{style:'biped',rot:2},paladin:{style:'biped',rot:1},vaelith:{style:'biped'},gstatue:{style:'biped',stride:0.3},titan:{style:'heavy',rot:1},
- golem:{style:'heavy',rot:1},sgolem:{style:'heavy',rot:1},shard:{style:'heavy',rot:1},rotking:{style:'heavy',hip:0.35},beast:{style:'biped',rot:1,stride:0.42},
- ghound:{style:'quad'},prat:{style:'scurry'},dragon:{style:'quad',legH:0.4,wings:1},griffin:{style:'quad',legH:0.4,wings:1,stride:0.3},
- crawler:{style:'crawl'},gazer:{style:'crawl',legH:0.35},kraken:{style:'crawl',legH:0.55,tent:1},maw:{style:'anchor',big:1},mcrab:{style:'crab',rot:1},
+ skeleton:{style:'biped'},ghoul:{style:'biped',stride:0.45},demon:{style:'biped',sh:0.74},abom:{style:'biped',hip:0.47,armX:0.27,legX:0.22},butcher:{style:'biped'},pdoc:{style:'biped'},
+ dknight:{style:'biped'},diver:{style:'biped'},gduel:{style:'biped',stride:0.32,legX:0.27},gmirror:{style:'biped'},paladin:{style:'biped'},vaelith:{style:'biped'},gstatue:{style:'biped',stride:0.3},titan:{style:'heavy'},
+ golem:{style:'heavy'},sgolem:{style:'heavy'},shard:{style:'heavy'},rotking:{style:'heavy',hip:0.35},beast:{style:'quad',legH:0.45},
+ ghound:{style:'quad'},prat:{style:'quad',legH:0.32},dragon:{style:'quad',legH:0.4,wings:1},griffin:{style:'quad',legH:0.4,wings:1},
+ crawler:{style:'crawl'},gazer:{style:'crawl',legH:0.35},kraken:{style:'crawl',legH:0.55,tent:1},maw:{style:'anchor',big:1},mcrab:{style:'crab'},
  siren:{style:'serpent'},leviathan:{style:'serpent'},
- harpy:{style:'wing'},seraph:{style:'wing',rot:1,hover:0.2},archon:{style:'wing',rot:1},weaver:{style:'wing',rot:1},pfly:{style:'wing',buzz:1,hover:0.45},devourer:{style:'float',rot:1,hover:0.3},
- wraith:{style:'robe',rot:1},sclone:{style:'robe',rot:1,hover:0.12},sstar:{style:'robe',rot:1,hover:0.18},acolyte:{style:'robe',rot:1},sacolyte:{style:'robe',rot:1},astraeus:{style:'robe',rot:1,hover:0.12},
- orb:{style:'spin',rot:1},sbook:{style:'book',rot:1},gportrait:{style:'float',rot:1,hover:0.35,flat:1},tentw:{style:'anchor',rot:1},mlure:{style:'swim',rot:1},
+ harpy:{style:'wing'},seraph:{style:'wing',hover:0.2},archon:{style:'wing'},weaver:{style:'wing'},pfly:{style:'wing',buzz:1,hover:0.45},devourer:{style:'float',hover:0.3},
+ wraith:{style:'robe'},sclone:{style:'robe',hover:0.12},sstar:{style:'robe',hover:0.18},acolyte:{style:'robe'},sacolyte:{style:'robe'},astraeus:{style:'robe',hover:0.12},
+ orb:{style:'spin'},sbook:{style:'book'},gportrait:{style:'float',hover:0.35,flat:1},tentw:{style:'anchor'},mlure:{style:'swim'},
  jelly:{style:'jelly',float:0.35,glow:0.55}};
 for(const k in MODEL3D){const D=MODEL3D[k];D.url=D.url||('models/'+k+'.glb');Object.assign(D,Object.assign({},M3S[D.style]||{},D))}
 const M3={};
@@ -7289,70 +7263,27 @@ function m3load(k){const D=MODEL3D[k];if(!D||M3[k]||!window.THREE||!THREE.GLTFLo
     if(skinned&&g.animations&&g.animations.length&&THREE.SkeletonUtils){const bb=new THREE.Box3().setFromObject(g.scene);const pick=(...L)=>{for(const re of L){const a=g.animations.find(x=>re.test(x.name));if(a)return a}return null};
       M3[k]={rig:true,scene:g.scene,H:bb.max.y-bb.min.y||1,y0:bb.min.y,clips:{idle:pick(/^idle$/i,/idle|stand|breath/i)||g.animations[0],run:pick(/^run/i,/running/i,/walk/i),walk:pick(/^walk/i,/walk/i),attack:pick(/attack|punch|slash|bite|swing|chop/i),die:pick(/^death/i,/death|die|dead/i)},D};return}
     let mesh=null;g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o});if(!mesh){M3[k]={fail:1};m3warn(k,'has no mesh');return}
-    g.scene.updateMatrixWorld(true);const geo=mesh.geometry.clone().applyMatrix4(mesh.matrixWorld);if(D.rot)geo.rotateY(-D.rot*Math.PI/2);geo.computeBoundingBox();const bb=geo.boundingBox;
-    const H=bb.max.y-bb.min.y;geo.translate(-(bb.min.x+bb.max.x)/2,-bb.min.y,-(bb.min.z+bb.max.z)/2);geo.scale(1/H,1/H,1/H);try{m3skin(geo,D)}catch(e){reportErr(e,'m3skin')}
+    g.scene.updateMatrixWorld(true);const geo=mesh.geometry.clone().applyMatrix4(mesh.matrixWorld);geo.computeBoundingBox();const bb=geo.boundingBox;
+    const H=bb.max.y-bb.min.y;geo.translate(-(bb.min.x+bb.max.x)/2,-bb.min.y,-(bb.min.z+bb.max.z)/2);geo.scale(1/H,1/H,1/H);
     M3[k]={geo,mat:mesh.material,D,W:(bb.max.x-bb.min.x)/H,L:(bb.max.z-bb.min.z)/H}},undefined,()=>{M3[k]={fail:1};m3warn(k,'could not be loaded')})}
-// find each model's legs once at load, so a walk moves only the legs (not swords, capes or tails near them)
-function m3clusters(pts,cell){const g=new Map();for(const q of pts){const k=Math.floor(q[0]/cell)+','+Math.floor(q[1]/cell);(g.get(k)||g.set(k,[]).get(k)).push(q)}
-  const seen=new Set(),out=[];for(const k of g.keys()){if(seen.has(k))continue;const st=[k],c=[];seen.add(k);
-    while(st.length){const K=st.pop();c.push(...g.get(K));const [a,b]=K.split(',').map(Number);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const n=(a+i)+','+(b+j);if(g.has(n)&&!seen.has(n)){seen.add(n);st.push(n)}}}
-    let x=0,z=0;for(const q of c){x+=q[0];z+=q[1]}out.push({n:c.length,x:x/c.length,z:z/c.length,pts:c})}
-  return out.sort((a,b)=>b.n-a.n)}
-function m3skin(geo,D){const st=D.style;if(!['biped','heavy','quad'].includes(st))return;const P=geo.attributes.position,n=P.count,W=new Float32Array(n*4);
-  const X=i=>P.getX(i),Y=i=>P.getY(i),Z=i=>P.getZ(i);const legs=[];
-  const foot=[];for(let i=0;i<n;i+=1)if(Y(i)<0.05)foot.push([X(i),Z(i)]);
-  let cl=m3clusters(foot,0.025).filter(c=>c.n>=Math.max(4,foot.length*0.04));
-  if(st==='quad'){// one foot per corner: split the low points into front/back and left/right, skip the middle (tails lie there)
-    let lo=[];for(let i=0;i<n;i++)if(Y(i)<0.3)lo.push([X(i),Z(i),Y(i)]);let c=0;for(const q of lo)c+=q[0];c/=lo.length||1;
-    const zz=lo.filter(q=>q[2]<0.12&&Math.abs(q[0]-c)>0.05).map(q=>q[1]).sort((a,b)=>a-b),zc=zz.length?(zz[Math.floor(zz.length*0.1)]+zz[Math.floor(zz.length*0.9)])/2:0;
-    for(const slot of [0,1,2,3]){const front=slot<2,right=slot%2===1;let f=null;
-      for(const ylim of [0.07,0.14,0.24]){const pts=lo.filter(q=>q[2]<ylim&&(q[1]>zc)===front&&(q[0]<c)===right&&Math.abs(q[0]-c)>0.04).map(q=>[q[0],q[1]]);if(pts.length<4)continue;const k=m3clusters(pts,0.03)[0];if(k&&k.n>=4){f=k;break}}
-      if(f)legs.push({fx:f.x,fz:f.z,hx:f.x*0.85+c*0.15,hy:D.legH,hz:f.z+(front?-1:1)*0.03,slot})}
-    if(legs.length<4){legs.length=0;geo.setAttribute('aW',new THREE.BufferAttribute(W,4));D.legs=[];return}}
-  else{let L,R;cl=cl.slice(0,3);if(cl.length>=2){const two=cl.slice(0,2).sort((a,b)=>b.x-a.x);L=two[0];R=two[1]}
-    else{let mx=0,mz=0;for(const q of foot){mx+=q[0];mz+=q[1]}mx/=foot.length||1;mz/=foot.length||1;L={x:mx+D.legX*0.6,z:mz};R={x:mx-D.legX*0.6,z:mz}}
-    const c=(L.x+R.x)/2;let hz=0,hn=0;for(let i=0;i<n;i++){const y=Y(i);if(y>D.hip-0.04&&y<D.hip+0.04&&Math.abs(X(i)-c)<0.15){hz+=Z(i);hn++}}hz=hn?hz/hn:(L.z+R.z)/2;
-    for(const [f,s] of [[L,0],[R,1]])legs.push({fx:f.x,fz:f.z,hx:c+(f.x-c)*0.75,hy:D.hip,hz,slot:s})}
-  // distance of each point to a leg's line, at the point's own height
-  const at=(l,y)=>{const t=Math.min(1,Math.max(0,(y-0.03)/(l.hy-0.03)));return [l.fx+(l.hx-l.fx)*t,l.fz+(l.hz-l.fz)*t]};
-  for(const l of legs){const ds=[];for(let i=0;i<n;i++){const y=Y(i);if(y<0.06||y>Math.min(l.hy,D.knee||l.hy*0.6))continue;const [a,b]=at(l,y),d=Math.hypot(X(i)-a,Z(i)-b);if(d<0.2)ds.push(d)}
-    ds.sort((a,b)=>a-b);const mate=legs.filter(o=>o!==l&&(st!=='quad'||(o.slot<2)===(l.slot<2))).map(o=>Math.abs(o.fx-l.fx))[0]||1;l.r=Math.min(st==='quad'?0.09:0.12,mate*0.55,Math.max(0.03,(ds[Math.floor(ds.length*0.5)]||0.07)*1.6))}
-  const ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t)};
-  for(let i=0;i<n;i++){const x=X(i),y=Y(i),z=Z(i);const w=[0,0,0,0],d=[];let bd=99;
-    legs.forEach(l=>{const [a,b]=at(l,y),q=Math.hypot(x-a,z-b)/l.r;d.push(q);if(q<bd)bd=q;w[l.slot]=(1-ss(1,1.5,q))*ss(l.hy+0.05,l.hy-0.1,y)});
-    // where two legs are close, each point belongs mostly to the nearer one
-    let sum=0;const sh=d.map(q=>Math.exp(-(q-bd)*6));sh.forEach(v=>sum+=v);legs.forEach((l,j)=>{w[l.slot]*=sh[j]/sum});
-    W.set(w,i*4)}
-  geo.setAttribute('aW',new THREE.BufferAttribute(W,4));D.legs=legs.map(l=>({x:+l.hx.toFixed(3),y:+l.hy.toFixed(3),z:+l.hz.toFixed(3),s:l.slot}))}
 const f3=v=>(+v).toFixed(3);
 // vertex shader body for each way of moving. p = rest position (height 1, facing +z), P/N = deformed position/normal
 function m3glsl(D,A){const W=f3(Math.max(0.2,A.W||0.6)),L=f3(Math.max(0.2,A.L||0.6));
-  const LG=D.legs||[],legs2=(D.style==='biped'||D.style==='heavy')&&LG.length===2,legs4=D.style==='quad'&&LG.length===4,ch=['x','y','z','w'];
-  const v3=(x,y,z)=>`vec3(${f3(x)},${f3(y)},${f3(z)})`;
-  // each leg turns as one piece around its own hip (and knee), blended by how much each point belongs to it
-  const bLegs=legs2?`vec3 dP=vec3(0.),dN=vec3(0.);`+LG.map(l=>{const sw=l.s===0?'swL':'swR',bk=l.s===0?'max(0.,-cos(uPh))':'max(0.,-cos(uPh+3.14159))',t=(D.knee-0.03)/(l.y-0.03);
-    return `{float w=aW.${ch[l.s]};if(w>0.001){float kb=${bk}*0.55*uRun*smoothstep(${f3(D.knee+0.05)},${f3(D.knee-0.07)},p.y);vec3 kv=${v3(l.x,D.knee,l.z)};vec3 Q=kv+rX(kb)*(P-kv);vec3 M=rX(kb)*N;
-      mat3 R=rX(-${sw}*${f3(D.stride)}*uRun);vec3 hv=${v3(l.x,l.y,l.z)};Q=hv+R*(Q-hv);M=R*M;Q.y+=max(0.,${sw==='swL'?'cos(uPh)':'cos(uPh+3.14159)'})*0.02*uRun;dP+=w*(Q-P);dN+=w*(M-N);}}`}).join('')+`P+=dP;N=normalize(N+dN);`:'';
-  const qLegs=legs4?`vec3 dP=vec3(0.),dN=vec3(0.);`+LG.map(l=>{const ph=(l.s===1||l.s===2)?'uPh+3.14159':'uPh';
-    return `{float w=aW.${ch[l.s]};if(w>0.001){float ph=${ph};mat3 R=rX(-sin(ph)*${f3(D.stride)}*uRun);vec3 hv=${v3(l.x,l.y,l.z)};vec3 Q=hv+R*(P-hv);Q.y+=max(0.,cos(ph))*0.035*uRun*smoothstep(${f3(l.y*0.6)},0.,p.y);dP+=w*(Q-P);dN+=w*(R*N-N);}}`}).join('')+`P+=dP;N=normalize(N+dN);`:'';
   const biped=`float side=smoothstep(-0.07,0.07,p.x);float sd=side*2.-1.;
   float swL=sin(uPh),swR=sin(uPh+3.14159),sw=mix(swR,swL,side),bk=mix(max(0.,-cos(uPh+3.14159)),max(0.,-cos(uPh)),side);
   float kneeUp=smoothstep(${f3(D.knee)},${f3(D.knee+0.08)},p.y);
   float wl=smoothstep(${f3(D.hip+0.06)},${f3(D.hip-0.1)},p.y)*(1.-smoothstep(mix(${f3(D.legX+0.14)},${f3(D.legX-0.02)},kneeUp),mix(${f3(D.legX+0.2)},${f3(D.legX+0.06)},kneeUp),abs(p.x)));
-  ${legs2?'wl=0.;'+bLegs:''}
   if(wl>0.){float kb=bk*0.5*uRun*smoothstep(${f3(D.knee+0.06)},${f3(D.knee-0.06)},p.y)*wl;vec3 kv=vec3(0.,${f3(D.knee)},0.);mat3 K=rX(kb);P=kv+K*(P-kv);N=K*N;
     mat3 R=rX(-sw*${f3(D.stride)}*uRun*wl);vec3 hv=vec3(0.,${f3(D.hip)},0.);P=hv+R*(P-hv);N=R*N;}
-  float wa=smoothstep(${f3(D.armX-0.02)},${f3(D.armX+0.08)},abs(p.x))*smoothstep(${f3(D.sh+0.1)},${f3(D.sh-0.04)},p.y)*smoothstep(${f3(D.knee)},${f3(D.knee+0.1)},p.y);
-  ${legs2?`wa*=clamp(1.-aW.x-aW.y,0.,1.)*smoothstep(${f3(LG[0].z-0.15)},${f3(LG[0].z-0.07)},p.z);`:''}
-  if(wa>0.){float aa=(sw*0.3*uRun-uAtk*${D.slam?'0.45':'0.42'}+sin(uT*1.7+sd)*0.05)*wa;mat3 Am=rX(aa);vec3 sv=vec3(sd*${f3(D.armX+0.03)},${f3(D.sh)},0.);P=sv+Am*(P-sv);N=Am*N;}
+  float wa=smoothstep(${f3(D.armX)},${f3(D.armX+0.05)},abs(p.x))*smoothstep(${f3(D.sh+0.1)},${f3(D.sh-0.04)},p.y)*smoothstep(${f3(D.knee)},${f3(D.knee+0.1)},p.y);
+  if(wa>0.){float aa=(sw*0.3*uRun-uAtk*${D.slam?'0.9':'0.42'}+sin(uT*1.7+sd)*0.05)*wa;mat3 Am=rX(aa);vec3 sv=vec3(sd*${f3(D.armX+0.03)},${f3(D.sh)},0.);P=sv+Am*(P-sv);N=Am*N;}
   float up=smoothstep(${f3(D.hip-0.05)},${f3(D.hip+0.12)},p.y);
-  float lean=(${D.slam?'0.08':'0.18'}*uRun+${D.slam?'0.42':'0.55'}*uAtk)*up;mat3 Lm=rX(lean);vec3 lv=vec3(0.,${f3(D.hip)},0.);P=lv+Lm*(P-lv);N=Lm*N;
+  float lean=(${D.slam?'0.08':'0.18'}*uRun+${D.slam?'0.3':'0.55'}*uAtk)*up;mat3 Lm=rX(lean);vec3 lv=vec3(0.,${f3(D.hip)},0.);P=lv+Lm*(P-lv);N=Lm*N;
   P.y+=abs(cos(uPh))*${D.slam?'0.04':'0.028'}*uRun+sin(uT*2.)*0.006*(1.-uRun);P.x+=sin(uPh)*${D.slam?'0.03':'0.018'}*uRun*up;`;
   const S={
   biped,heavy:biped,
   quad:`float front=smoothstep(-0.05,0.05,p.z),side=smoothstep(-0.05,0.05,p.x);float diag=abs(front-side);float ph=uPh+diag*3.14159;
   float wl=smoothstep(${f3(D.legH)},${f3(D.legH-0.12)},p.y)*smoothstep(${f3(0.06*+L)},${f3(0.18*+L)},abs(p.z));
-  ${legs4?'wl=0.;'+qLegs:''}
   if(wl>0.){float a=-sin(ph)*${f3(D.stride)}*uRun*wl;mat3 R=rX(a);vec3 hv=vec3(0.,${f3(D.legH)},(front*2.-1.)*${f3(0.28*+L)});P=hv+R*(P-hv);N=R*N;P.y+=max(0.,cos(ph))*0.04*uRun*wl;}
   float head=smoothstep(${f3(0.2*+L)},${f3(0.45*+L)},p.z)*smoothstep(${f3(D.legH-0.1)},${f3(D.legH+0.05)},p.y);
   float nod=(sin(uPh*2.)*0.06*uRun+uAtk*0.45)*head;mat3 Hm=rX(nod);vec3 nv=vec3(0.,${f3(D.legH+0.1)},${f3(0.2*+L)});P=nv+Hm*(P-nv);N=Hm*N;
@@ -7375,18 +7306,15 @@ function m3glsl(D,A){const W=f3(Math.max(0.2,A.W||0.6)),L=f3(Math.max(0.2,A.L||0
   robe:`float hem=smoothstep(0.38,0.,p.y);P.x+=sin(uT*3.+p.y*9.+p.z*4.)*0.035*hem;P.z+=cos(uT*2.6+p.y*7.)*0.03*hem-hem*0.08*uRun;
   float sd=p.x>0.?1.:-1.;float arm=smoothstep(0.17,0.27,abs(p.x))*smoothstep(0.85,0.7,p.y)*smoothstep(0.35,0.5,p.y);mat3 Am=rX(-uAtk*0.8*arm+sin(uT*1.5+sd)*0.08*arm);vec3 av=vec3(sd*0.2,0.78,0.);P=av+Am*(P-av);N=Am*N;
   mat3 Lm=rX(0.12*uRun+0.3*uAtk);vec3 lv=vec3(0.,0.3,0.);P=lv+Lm*(P-lv);N=Lm*N;P.y+=sin(uT*1.6)*0.025;`,
-  scurry:`float tail=smoothstep(${f3(-0.1*+L)},${f3(-0.45*+L)},p.z);P.x+=sin(uT*(3.+uRun*6.)-p.z*7.)*0.06*tail;P.y+=abs(sin(uPh*1.4))*0.07*uRun+sin(uT*3.)*0.006;
-  float head=smoothstep(${f3(0.05*+L)},${f3(0.3*+L)},p.z);mat3 Hm=rX(sin(uT*5.)*0.05*(1.-uRun)+uAtk*0.3);vec3 nv=vec3(0.,0.35,${f3(0.05*+L)});P=mix(P,nv+Hm*(P-nv),head);
-  mat3 Pm=rX(sin(uPh*1.4)*0.1*uRun-uAtk*0.2);vec3 cv=vec3(0.,0.2,0.);P=cv+Pm*(P-cv);N=Pm*N;P.z+=uAtk*0.15;`,
   spin:`mat3 Ym=rY(uT*(1.2+uAtk*6.));P=Ym*P;N=Ym*N;P.y+=sin(uT*1.7)*0.05;`,
-  book:`float yl=0.3+(p.z+${f3(0.45*+L)})/${f3(0.95*+L)}*0.15;float up=smoothstep(-0.03,0.05,p.y-yl);float ch=pow(max(0.,sin(uT*(2.6+uAtk*7.))),3.);float bite=(ch*0.17+uAtk*0.12)*up;mat3 Bm=rX(bite);vec3 hv=vec3(0.,0.3,${f3(-0.45*+L)});P=hv+Bm*(P-hv);N=Bm*N;P.y+=sin(uT*2.)*0.04+ch*0.02;mat3 Tm=rX(-0.08*uRun-ch*0.05);P=Tm*P;N=Tm*N;mat3 Ym=rY(sin(uT*1.1)*0.1);P=Ym*P;N=Ym*N;`,
+  book:`float top=smoothstep(0.42,0.58,p.y);float bite=(max(0.,sin(uT*(2.+uAtk*9.)))*0.3+uAtk*0.15)*top;mat3 Bm=rX(-bite);vec3 hv=vec3(0.,0.5,${f3(-0.4*+L)});P=hv+Bm*(P-hv);N=Bm*N;P.y+=sin(uT*2.)*0.05;mat3 Ym=rY(sin(uT*1.1)*0.15);P=Ym*P;N=Ym*N;`,
   anchor:`float h=clamp(p.y,0.,1.);float bend=(sin(uT*1.4)*0.18+sin(uT*2.3+1.)*0.08+uAtk*0.5)*h*h;mat3 Bm=rX(bend);P=Bm*P;N=Bm*N;mat3 Zm=rZ(sin(uT*1.1)*0.12*h*h);P=Zm*P;N=Zm*N;`,
   swim:`float tail=smoothstep(0.,${f3(-0.5*+L)},p.z);P.x+=sin(uT*(5.+uRun*5.)-p.z*6.)*0.06*tail;P.y+=sin(uT*1.6)*0.05;mat3 Lm=rX(uAtk*0.3);P=Lm*P;N=Lm*N;P.z+=uAtk*0.15;`};
   return S[D.style]||S.biped}
 function m3mat(base,D,A){const m=base.clone();m.transparent=true;if(m.color)m.color.setScalar(1.45);const U={uPh:{value:0},uRun:{value:0},uAtk:{value:0},uT:{value:0},uDie:{value:0}};m.userData.U=U;
   const flyer=['wing','float','robe','spin','book','swim'].includes(D.style);
   m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
-    sh.vertexShader=`uniform float uPh,uRun,uAtk,uT,uDie;${['biped','heavy','quad'].includes(D.style)?'attribute vec4 aW;':''}
+    sh.vertexShader=`uniform float uPh,uRun,uAtk,uT,uDie;
 mat3 rX(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,s,0.,-s,c);}
 mat3 rY(float a){float c=cos(a),s=sin(a);return mat3(c,0.,-s,0.,1.,0.,s,0.,c);}
 mat3 rZ(float a){float c=cos(a),s=sin(a);return mat3(c,s,0.,-s,c,0.,0.,0.,1.);}
@@ -7421,9 +7349,9 @@ function m3sync(g,t){const live=new Set();g.m3=g.m3||new Map();
       if(a&&o.cur!==a){a.reset().fadeIn(0.15).play();if(o.cur)o.cur.fadeOut(0.15);o.cur=a}if(a&&st==='run'&&o.acts.run===a)a.timeScale=Math.max(0.6,Math.min(1.8,sp/dtm/T/2.2||1));
       o.mix.update(dtm);const hs=m.h/T*0.86/A.H;o.me.position.set(m.x/T,-A.y0*hs-(m.dead>0&&!o.acts.die?(0.5-m.dead)*0.6:0),m.y/T);o.me.rotation.y=o.yaw+(D.face||0);o.me.scale.setScalar(hs);continue}
     if(!A.geo)continue;
-    let o=g.m3.get(m);if(!o){const mat=m3mat(A.mat,D,A);if(M3TINT.has(k)&&m.tint&&m.tint.startsWith('#')&&mat.color)mat.color.setScalar(1.45).lerp((c=>c.multiplyScalar(1.45/Math.max(0.05,c.r,c.g,c.b)))(new THREE.Color(m.tint)),0.32);const me=new THREE.Mesh(A.geo,mat);g.scene.add(me);o={me,mat,ph:0,run:0,yaw:m.dir>0?-Math.PI/2:Math.PI/2,px:m.x,py:m.y};g.m3.set(m,o)}
+    let o=g.m3.get(m);if(!o){const mat=m3mat(A.mat,D,A);if(M3TINT.has(k)&&m.tint&&m.tint.startsWith('#')&&mat.color)mat.color.setScalar(1.45).lerp(new THREE.Color(m.tint).multiplyScalar(1.6),0.32);const me=new THREE.Mesh(A.geo,mat);g.scene.add(me);o={me,mat,ph:0,run:0,yaw:m.dir>0?-Math.PI/2:Math.PI/2,px:m.x,py:m.y};g.m3.set(m,o)}
     live.add(m);m.m3=1;const U=o.mat.userData.U,dx=m.x-o.px,dy=m.y-o.py,sp=Math.hypot(dx,dy);o.px=m.x;o.py=m.y;
-    const hs=m.h/T*0.86/Math.max(1,(A.W||0)*0.62,(A.L||0)*0.55)*(D.big?1.2:1)*(m.kind==='raid'&&!D.big?0.82:1);o.ph+=sp/T/Math.max(0.3,hs)*2.6;o.run+=((sp>0.4||m.wa>0.3?1:0)-o.run)*0.15;
+    const hs=m.h/T*0.86/Math.max(1,(A.W||0)*0.8,(A.L||0)*0.8)*(D.big?1.6:1);o.ph+=sp/T/Math.max(0.3,hs)*2.6;o.run+=((sp>0.4||m.wa>0.3?1:0)-o.run)*0.15;
     let want=o.yaw;if(sp>0.4)want=Math.atan2(dx,dy);else if(hero&&Math.hypot(hero.x-m.x,hero.y-m.y)<T*4)want=Math.atan2(hero.x-m.x,hero.y-m.y);
     let dYaw=((want-o.yaw+Math.PI*3)%(Math.PI*2))-Math.PI;o.yaw+=dYaw*0.18;
     const ak=m.atk?m.atk.t/m.atk.dur:-1;const atk=ak<0?0:ak<0.5?ak/0.5*0.55:ak<0.75?1:Math.max(0,1-(ak-0.75)/0.25);
@@ -7463,14 +7391,6 @@ function g3build(){const g=G3,d=dart(bi);
   g.scene.add(Wg);g.world=Wg;
   const ac=new THREE.Color(BIO.accent||'#9fc4ff');g.hemi.color.copy(ac).lerp(new THREE.Color(0xffffff),0.55);
   g.lights=props.filter(p=>p.torch||p.kind==='brazier'||p.kind==='crystal').map(p=>({x:p.x/T,z:p.y/T-(p.torch?0.25:0),y:p.torch?1.25:0.9,c:new THREE.Color(p.kind==='brazier'?'#ff8a3c':p.kind==='crystal'?'#9fe8ff':(BIO.accent||'#ffb060')),seed:p.seed||0}))}
-// raid danger zones are painted onto a see-through sheet lying on the arena floor
-function g3haz(g){const A=RA&&RA.A;if(g.hz&&(!A||g.hz.A!==A)){g.scene.remove(g.hz.me);g.hz.tex.dispose();g.hz.me.material.dispose();g.hz.me.geometry.dispose();g.hz=null}
-  if(!A)return;const K=0.5;
-  if(!g.hz){const c=document.createElement('canvas');c.width=Math.ceil((A.R-A.L)*K);c.height=Math.ceil((A.Bt-A.Tp)*K);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
-    const me=new THREE.Mesh(new THREE.PlaneGeometry((A.R-A.L)/T,(A.Bt-A.Tp)/T).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,toneMapped:false,polygonOffset:true,polygonOffsetFactor:-4}));
-    me.position.set((A.L+A.R)/2/T,0.07,(A.Tp+A.Bt)/2/T);me.renderOrder=2;g.scene.add(me);g.hz={A,c,q:c.getContext('2d'),tex,me,on:true}}
-  const h=g.hz,any=haz.length>0;if(!any&&!h.on)return;h.q.setTransform(1,0,0,1,0,0);h.q.clearRect(0,0,h.c.width,h.c.height);
-  if(any){h.q.setTransform(K,0,0,K,-A.L*K,-A.Tp*K);drawHaz(h.q,true)}h.on=any;h.tex.needsUpdate=true}
 function render3D(t){const g=G3||g3init();if(!g)return null;
   {const n=performance.now();if(g.lt){const d=Math.min(250,n-g.lt);g.ft=(g.ft||16)*0.97+d*0.03;g.slow=g.ft>55?(g.slow||0)+d:0;if(g.slow>8000&&!window.__keep3d){g.slow=0;S.view='explore';save();toast('3D view was too slow on this device, so it switched back to Explore. You can turn it on again in Settings.');g.lt=0;return null}}g.lt=n}
   if(g.c3.style.display==='none')g.c3.style.display='';
@@ -7484,7 +7404,6 @@ function render3D(t){const g=G3||g3init();if(!g)return null;
   const hx=hero.x/T,hz=hero.y/T,L=(g.lights||[]).map(l=>[Math.hypot(l.x-hx,l.z-hz),l]).sort((a,b)=>a[0]-b[0]);
   g.tl.forEach((l,i)=>{const e=L[i];if(!e||e[0]>14){l.intensity=0;return}const o=e[1];l.position.set(o.x,o.y,o.z);l.color.copy(o.c);l.intensity=(o.lava?10:16)*(0.8+0.14*Math.sin(t*(o.lava?2:7)+o.seed)+0.06*Math.sin(t*13+o.seed*2))});
   try{m3sync(g,t)}catch(e){reportErr(e,'m3')}
-  try{g3haz(g)}catch(e){reportErr(e,'3d haz')}
   if(g.lavaMat)g.lavaMat.uniforms.t.value=t;if(g.lake)g.lake.uniforms.t.value=t;
   if(g.flames)g.flames.forEach((f,i)=>{const k=1+0.12*Math.sin(t*9+i*1.7)+0.06*Math.sin(t*17+i);f.scale.set(0.42*k,0.55*k,1)});
   if(g.comp&&g.kit)g.comp.render();else g.r.render(g.scene,g.cam3);return g}
