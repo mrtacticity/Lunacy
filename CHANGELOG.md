@@ -2,6 +2,19 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.35 | 3D pet pictures | Nov 1, 2026
+- The pet menu now shows every pet as its 3D model, the same one that follows you around
+
+## v1.34 | 3D pets | Nov 1, 2026
+- Pets are now 3D! All 32 pets are real 3D models that follow you around the dungeon and raids, and look at you when you stop
+- Each pet moves its own way: pups and hounds trot, the griffin and whelp prowl, Batling Vey flaps, Pearlfin swims, Weaveling scuttles, Lil' Leviathan slithers, wisps, moons and stars float and glow, and the little ones hop along behind you
+
+## v1.33 | 3D for everyone | Nov 1, 2026
+- 3D is now the main view for everyone, no longer a beta. Every dungeon, monster and raid is in 3D
+- Older phones: the game first lowers 3D detail to keep things smooth. If a device still can't keep up, or can't run 3D at all, it uses the 2D view by itself
+- Graphics → Smooth now keeps 3D but turns off glow and lowers detail
+- The Explore, 3D and Classic choice has been removed from Settings
+
 ## v1.32 | 3D raids | Nov 1, 2026
 - Raids are now in 3D too: the Hollow Court, Ash, Gilded Gallery, Sanctum and Abyssal Maw arenas are built in 3D with real stone pillars, and every raid boss and minion is a 3D model
 - Raid danger zones (cones, beams, arrow rain, star orbs, tentacle slams and the tide) now glow on the 3D arena floor so you can see where to step
