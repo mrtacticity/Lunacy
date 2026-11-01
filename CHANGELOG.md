@@ -2,6 +2,11 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.26 | 3D view (beta) | Oct 31, 2026
+- New: 3D view (beta). Turn it on in Settings → Battle view → 3D (beta). The dungeon is built in real 3D with walls, lighting and torches, and your hero and monsters stand in it. Raids still use the normal view for now
+- If 3D runs too slowly on your device, the game switches back to the normal view by itself
+- The app now has a proper name, icon and description when installed
+
 ## v1.25 | Accounts and big screens | Oct 31, 2026
 - Playing on a computer? The game now fills your whole screen: a big battle view with your hero stats and recent loot on the side, and menus open as a window over the fight. Click outside a window or press Esc to close it. Phones look the same as before
 - Your hero now has an Account code (Settings → Your account). Use it to sign in on any phone or computer, no Discord needed
