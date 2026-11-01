@@ -2,6 +2,13 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.42 | Scythe grip | Nov 1, 2026
+- Ashbringer sits in both hands and lies flat so you can see the blade from above
+
+## v1.41 | Test hero gear | Nov 1, 2026
+- The test hero's bag now holds every unique piece, locked so nothing gets salvaged
+- Ashbringer is equipped so the scythe grip can be checked right away
+
 ## v1.40 | Hero portrait fix | Nov 1, 2026
 - The Gear page shows your 3D body again. The last update hid it
 - Equip any scythe and he holds Ashbringer with both hands

@@ -4609,6 +4609,8 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.42','Nov 1, 2026','Scythe grip',["Ashbringer sits in both hands and lies flat so you can see the blade from above"]],
+ ['1.41','Nov 1, 2026','Test hero gear',["The test hero's bag now holds every unique piece, locked so nothing gets salvaged","Ashbringer is equipped so the scythe grip can be checked right away"]],
  ['1.40','Nov 1, 2026','Hero portrait fix',["The Gear page shows your 3D body again. The last update hid it","Equip any scythe and he holds Ashbringer with both hands"]],
  ['1.39','Nov 1, 2026','Hero page',["The Gear page and Customize look now show your 3D body instead of the old painted knight","The clothes change colour to match the helm, body and legs you have equipped"]],
  ['1.38','Nov 1, 2026','Hero size',["The 3D hero is smaller now, about the height of the dungeon walls"]],
@@ -7466,6 +7468,11 @@ void m3def(inout vec3 P,inout vec3 N){vec3 p=P;
 function dyeMat(m){if(!m)return;m.color&&m.color.set('#ffffff');m.onBeforeCompile=sh=>{sh.uniforms.uDye={value:new THREE.Color('#c8c8c8')};m.userData.sh=sh;sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uDye;').replace('#include <color_fragment>','#include <color_fragment>\n{vec3 src=diffuseColor.rgb;float mx=max(src.r,max(src.g,src.b));float mn=min(src.r,min(src.g,src.b));float skin=smoothstep(0.03,0.12,src.r-src.b)*smoothstep(0.28,0.62,src.r)*(1.0-smoothstep(0.28,0.55,mx-mn));float hair=smoothstep(0.26,0.07,mx);diffuseColor.rgb=mix(src*uDye*1.45,src,clamp(skin+hair,0.0,1.0));}')};m.needsUpdate=true}
 function heroDye(lk,gear){try{const L=heroLooks(lk,gear);const a=new THREE.Color((L.body&&L.body.c)||'#c4c4c4'),h=new THREE.Color((L.helm&&L.helm.c)||'#c4c4c4'),g=new THREE.Color((L.legs&&L.legs.c)||'#c4c4c4');return a.lerp(h,0.34).lerp(g,0.42)}catch(e){return new THREE.Color('#c4c4c4')}}
 function applyDye(m,col){if(m&&m.userData.sh)m.userData.sh.uniforms.uDye.value.copy(col)}
+function gripScythe(w,hand,off){const g=gripScythe.g||(gripScythe.g={r:new THREE.Vector3(),l:new THREE.Vector3(),d:new THREE.Vector3(),x:new THREE.Vector3(),z:new THREE.Vector3(),q:new THREE.Quaternion(),h:new THREE.Quaternion(),m:new THREE.Matrix4()});
+  hand.getWorldPosition(g.r);off.getWorldPosition(g.l);g.d.copy(g.l).sub(g.r);if(g.d.lengthSq()<1e-6)return;g.d.normalize();
+  g.x.crossVectors(g.d,g.z.set(0,1,0));if(g.x.lengthSq()<1e-8)g.x.set(1,0,0);else g.x.normalize();g.z.crossVectors(g.x,g.d).normalize();
+  g.q.setFromRotationMatrix(g.m.makeBasis(g.x,g.d,g.z));hand.getWorldQuaternion(g.h);w.quaternion.copy(g.h.invert().multiply(g.q));
+  const s=0.55,gy=0.22;w.scale.setScalar(s);w.position.set(0,gy,0).applyQuaternion(w.quaternion).multiplyScalar(s).negate()}
 function h3sync(g,t){
   if(!hero)return;
   const sex=S.look&&S.look.sex==='f'?'f':'m',key='hero_'+sex,A=M3[key];
@@ -7487,9 +7494,9 @@ function h3sync(g,t){
   if(a&&o.cur!==a){a.reset().fadeIn(0.12).play();if(o.cur)o.cur.fadeOut(0.12);o.cur=a}
   if(a&&st==='run')a.timeScale=Math.max(0.75,Math.min(1.5,(sp/Math.max(dtm,0.016))/80));
   o.mix.update(dtm);if(o.hips&&o.hip0)o.hips.position.copy(o.hip0);applyDye(o.mat,heroDye(S.look,S.gear));
-  if(scythe&&M3.wep){if(!o.wep){let hand=null;o.me.traverse(b=>{if(!hand&&b.isBone&&/RightHand$/.test(b.name))hand=b});if(hand){const w=M3.wep.clone(true);w.position.set(-0.2699,0.012,0.0359);w.quaternion.set(-0.7655,-0.6062,0.1519,-0.1533);w.scale.setScalar(0.95);hand.add(w);o.wep=w}}if(o.wep)o.wep.visible=true}
+  if(scythe&&M3.wep){if(!o.wep){let hand=null,off=null;o.me.traverse(b=>{if(b.isBone&&/RightHand$/.test(b.name))hand=b;if(b.isBone&&/LeftHand$/.test(b.name))off=b});if(hand){const w=M3.wep.clone(true);hand.add(w);o.wep=w;o.hand=hand;o.off=off}}if(o.wep)o.wep.visible=true}
   else if(o.wep)o.wep.visible=false;
-  o.me.position.set(hero.x/T,-(o.y0||0)*o.fit,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(o.fit);o.me.visible=true;hero.h3=1}
+  o.me.position.set(hero.x/T,-(o.y0||0)*o.fit,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(o.fit);o.me.updateMatrixWorld(true);if(o.wep&&o.wep.visible&&o.hand&&o.off)gripScythe(o.wep,o.hand,o.off);o.me.visible=true;hero.h3=1}
 function m3sync(g,t){const live=new Set();g.m3=g.m3||new Map();
   try{h3sync(g,t)}catch(e){if(hero)hero.h3=0}
   const dtm=Math.min(0.1,t-(g.m3t||t));g.m3t=t;
@@ -8983,13 +8990,17 @@ function ownerKit(silent){
   for(const k of ['atk','str','def','hp',...GSK])S.xp[k]=Math.max(S.xp[k]||0,XPT[99]);
   S.gold=Math.max(S.gold,1e15);S.stones+=100000;S.shards+=100000;
   for(const k of ['ore','sig'])S.bank[k]=S.bank[k].map(v=>v+5000);for(const k of ['fish','food'])S.bank[k]=S.bank[k].map(v=>v+2000);
-  for(const k of Object.keys(UNI)){S.uniq[k]=(S.uniq[k]||0)+1;addLook(makeUnique(k))}
+  for(const k of Object.keys(UNI))S.uniq[k]=(S.uniq[k]||0)+1;
+  const owned=new Set();for(const s of SLOTS)if(S.gear[s]&&S.gear[s].u)owned.add(S.gear[s].u);for(const it of S.bag)if(it.u)owned.add(it.u);
+  for(const k of Object.keys(UNI)){if(owned.has(k))continue;const it=makeUnique(k);it.lock=true;addLook(it);if(!it.id)it.id=uid();it.at=Date.now();S.bag.push(it)}
+  trimBag();
   for(const sl of SLOTS){let bk=null,bp=0;for(const k of Object.keys(UNI))if(UNI[k].slot===sl){const p=makeUnique(k).power;if(p>bp){bp=p;bk=k}}if(bk&&bp>S.gear[sl].power){S.gear[sl]=makeUnique(bk)}}
+  const ab=S.bag.find(it=>it.u==='a_wep');if(ab&&S.gear.weapon!==ab){const cur=S.gear.weapon;S.bag=S.bag.filter(x=>x!==ab);S.gear.weapon=ab;if(cur)S.bag.push(cur)}
   for(const a of ACH){let ok=false;try{ok=a.f()}catch(e){}if(ok&&!S.ach[a.k])S.ach[a.k]=Date.now()}
   for(const k of Object.keys(PETS))S.pets[k]=S.pets[k]||Date.now();
   for(const t of TITLES)if(!S.titles.includes(t.k))S.titles.push(t.k);S.title='Owner';
   S.raid.keys=RAID.keyMax;S.adminInf=true;S.essence=(S.essence||0)+1e6;S.slay.pts+=5000;S.xp.slay=Math.max(S.xp.slay||0,XPT[99]);S.rush.tries=99;S.trophies=['z9_leg','r_wep','a_wep','z5_leg','z7_leg','z3_leg'];for(const k of Object.keys(S.pets))S.petXp[k]=Math.max(S.petXp[k]||0,petNext(30));S.pass={tier:2,until:Date.now()+365*864e5,claim:''};
-  calc();B.php=C.maxHp;updateEvBar();banner('OWNER KIT','Everything unlocked for testing','#ff8a8a');
+  calc();B.php=C.maxHp;updateEvBar();if(!silent)banner('OWNER KIT','Every piece of gear is in the bag. Ashbringer is equipped.','#ff8a8a');else toast('Every piece of gear is in the bag');
 }
 
 /* ================= SLAYER ================= */
@@ -9093,7 +9104,7 @@ function switchSlot(to){
   const look=JSON.parse(JSON.stringify(S.look)),name=S.name,admin=S.admin;
   SAVEKEY=SLOTKEYS[to]||SLOTKEYS.main;
   const had=load();if(!had&&to==='season'){S.season=1;S.name=name;S.look=look;S.tut=TUT.length;S.created=Date.now()}
-  if(to==='test'){S.testHero=true;S.name='Test Hero';S.tut=TUT.length;if(!had)ownerKit(true)}
+  if(to==='test'){S.testHero=true;S.name='Test Hero';S.tut=TUT.length;ownerKit(true)}
   if(admin)S.admin=true;applyMeta();
   for(const k of ['mob','raid','rush'])B[k]=null;B.idx=0;B.dead=0.5;B.splats=[];lb.ladder=null;_lst={};
   ensureDaily();calc();B.php=C.maxHp;closeModal();buildNav();show('dungeon');updateTop();updateEvBar();
