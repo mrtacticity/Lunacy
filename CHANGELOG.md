@@ -2,6 +2,15 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.44 | Seraphic Aegis | Nov 1, 2026
+- New: the Seraphic Aegis set is now real 3D armour. Helm, cuirass (with wings) and greaves each show on your hero, and you can mix them with any other gear
+- The Seraphic Aegis pieces have new item pictures made from the 3D models
+- Your hero now really holds the scythe: a closed fist around the handle, elbow forward, blade swung out to the side so it no longer covers your head
+- Every weapon now shows in your hero's hand in 3D: swords, axes, maces, spears, greatswords, bows, crossbows, staffs and wands. One-handed weapons carry your shield on the left arm
+- Your hero now swings, draws the bow, casts spells and raises the shield to block
+- The Gear page shows your 3D hero again. It was stuck on the flat drawing
+- Staff ranks: Owner, Moderator and Lunacy Crew badges now show on the leaderboard, in clan chat and on profiles. Moderators can mute, warn, hide and ban
+
 ## v1.43 | Reaper grip | Nov 1, 2026
 - Ashbringer is now held upright in your hero's hand like a reaper's scythe, blade curving over the head
 - Your weapon arm stays steady while you run, so the scythe no longer flails around
