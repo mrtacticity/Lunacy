@@ -4609,6 +4609,7 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.38','Nov 1, 2026','Hero size',["The 3D hero is smaller now, about the height of the dungeon walls"]],
  ['1.37','Nov 1, 2026','Hero bodies found',["The male and female bodies now load from the models folder"]],
  ['1.36','Nov 1, 2026','Male and female heroes',["New heroes pick a name and a male or female body before entering the dungeon","The 3D hero in the dungeon is now that body. Change it any time under Customize look","Armor still shows on your paper doll. 3D armor pieces come next"]],
  ['1.35','Nov 1, 2026','3D pet pictures',["The pet menu now shows every pet as its 3D model, the same one that follows you around"]],
@@ -7468,7 +7469,8 @@ function h3sync(g,t){
   if(!o||o.sex!==sex){if(o){g.scene.remove(o.me);try{o.mix.stopAllAction()}catch(e){}}
     const me=THREE.SkeletonUtils.clone(A.scene);let hips=null;me.traverse(b=>{if(b.isBone&&!hips&&/Hips/.test(b.name))hips=b;if(b.isMesh&&b.material)b.material=b.material.clone()});
     const mix=new THREE.AnimationMixer(me),acts={};for(const n in A.clips)if(A.clips[n])acts[n]=mix.clipAction(A.clips[n]);
-    g.scene.add(me);o=g.hero3={me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null}}
+    g.scene.add(me);me.updateMatrixWorld(true);const bb=new THREE.Box3().setFromObject(me);const Hh=Math.min(3,Math.max(0.4,(bb.max.y-bb.min.y)||1));
+    o=g.hero3={me,mix,acts,cur:null,yaw:hero.dir>0?Math.PI/2:-Math.PI/2,px:hero.x,py:hero.y,sex,hips,hip0:hips?hips.position.clone():null,fit:0.82/Hh,y0:bb.min.y}}
   const dx=hero.x-o.px,dy=hero.y-o.py,sp=Math.hypot(dx,dy);o.px=hero.x;o.py=hero.y;
   const want=sp>0.35?Math.atan2(dx,dy):(hero.dir>0?Math.PI/2:-Math.PI/2);
   o.yaw+=(((want-o.yaw+Math.PI*3)%(Math.PI*2))-Math.PI)*0.22;
@@ -7476,8 +7478,7 @@ function h3sync(g,t){
   if(a&&o.cur!==a){a.reset().fadeIn(0.12).play();if(o.cur)o.cur.fadeOut(0.12);o.cur=a}
   if(a&&st==='run')a.timeScale=Math.max(0.75,Math.min(1.5,(sp/Math.max(dtm,0.016))/80));
   o.mix.update(dtm);if(o.hips&&o.hip0)o.hips.position.copy(o.hip0);
-  const hs=112/T*0.86/(A.H||1);
-  o.me.position.set(hero.x/T,-(A.y0||0)*hs,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(hs);o.me.visible=true;hero.h3=1}
+  o.me.position.set(hero.x/T,-(o.y0||0)*o.fit,hero.y/T);o.me.rotation.y=o.yaw;o.me.scale.setScalar(o.fit);o.me.visible=true;hero.h3=1}
 function m3sync(g,t){const live=new Set();g.m3=g.m3||new Map();
   try{h3sync(g,t)}catch(e){if(hero)hero.h3=0}
   const dtm=Math.min(0.1,t-(g.m3t||t));g.m3t=t;

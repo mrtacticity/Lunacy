@@ -2,6 +2,9 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.38 | Hero size | Nov 1, 2026
+- The 3D hero is smaller now, about the height of the dungeon walls
+
 ## v1.37 | Hero bodies found | Nov 1, 2026
 - The male and female bodies now load from the models folder
 
