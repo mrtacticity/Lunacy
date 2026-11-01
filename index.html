@@ -4609,6 +4609,7 @@ const ACHMAX=ACH.reduce((a,x)=>a+x.p,0);
 const ASCR=[[1,'Title: Ascendant'],[2,'Silver aura around your hero'],[3,'+1 raid key every day'],[4,'Start 10 floors deeper after every Rebirth'],[5,'Gold aura · Title: Moonborn'],[7,'+1 Moonfire Flask charge'],[10,'Violet aura · Title: The Lunatic']];
 /* ----- Patch notes (mirrors CHANGELOG.md, which the Discord bot posts) ----- */
 const PATCHES=[
+ ['1.37','Nov 1, 2026','Hero bodies found',["The male and female bodies now load from the models folder"]],
  ['1.36','Nov 1, 2026','Male and female heroes',["New heroes pick a name and a male or female body before entering the dungeon","The 3D hero in the dungeon is now that body. Change it any time under Customize look","Armor still shows on your paper doll. 3D armor pieces come next"]],
  ['1.35','Nov 1, 2026','3D pet pictures',["The pet menu now shows every pet as its 3D model, the same one that follows you around"]],
  ['1.34','Nov 1, 2026','3D pets',["Pets are now 3D! All 32 pets are real 3D models that follow you around the dungeon and raids, and look at you when you stop", "Each pet moves its own way: pups and hounds trot, the griffin and whelp prowl, Batling Vey flaps, Pearlfin swims, Weaveling scuttles, Lil' Leviathan slithers, wisps, moons and stars float and glow, and the little ones hop along behind you"]],
@@ -7336,8 +7337,8 @@ const PET3D={p0:{style:'quad',rot:1,legH:0.4,stride:0.4},p1:{style:'crawl'},p2:{
  mpet:{style:'hop',rot:1},ash:{style:'quad',legH:0.35,wings:1,stride:0.35},mole:{style:'hop',rot:1},otter:{style:'hop'},imp:{style:'hop',rot:1},sprig:{style:'hop',rot:1},slay:{style:'quad',rot:1,legH:0.42,stride:0.4},hmwisp:{style:'float',glow:0.8,hover:0.5}};
 for(const k in PET3D)MODEL3D['pet_'+k]=Object.assign({url:'models/pets/'+k+'.glb',pet:1},PET3D[k]);
 for(const k in MODEL3D){const D=MODEL3D[k];D.url=D.url||('models/'+k+'.glb');Object.assign(D,Object.assign({},M3S[D.style]||{},D))}
-MODEL3D.hero_m={url:'models/hero/male.glb',style:'biped',hero:1};
-MODEL3D.hero_f={url:'models/hero/female.glb',style:'biped',hero:1};
+MODEL3D.hero_m={url:'models/male.glb',style:'biped',hero:1};
+MODEL3D.hero_f={url:'models/female.glb',style:'biped',hero:1};
 for(const k of ['hero_m','hero_f']){const D=MODEL3D[k];Object.assign(D,Object.assign({},M3S.biped,D))}
 const M3={};let PET3=null;
 // shared monster bodies take on each dungeon's colour, like the painted ones do

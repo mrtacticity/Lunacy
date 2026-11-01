@@ -2,6 +2,9 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.37 | Hero bodies found | Nov 1, 2026
+- The male and female bodies now load from the models folder
+
 ## v1.36 | Male and female heroes | Nov 1, 2026
 - New heroes pick a name and a male or female body before entering the dungeon
 - The 3D hero in the dungeon is now that body. Change it any time under Customize look
