@@ -2,6 +2,14 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.32 | 3D raids | Nov 1, 2026
+- Raids are now in 3D too: the Hollow Court, Ash, Gilded Gallery, Sanctum and Abyssal Maw arenas are built in 3D with real stone pillars, and every raid boss and minion is a 3D model
+- Raid danger zones (cones, beams, arrow rain, star orbs, tentacle slams and the tide) now glow on the 3D arena floor so you can see where to step
+- Fixed monster legs glitching: many models were walking sideways inside their own bodies. Every monster now faces the way it walks and only its real legs move, so swords, capes and tails no longer get dragged around
+- The Hungry Tome now chomps properly instead of bending in half
+- Werewolves now run on two legs, and the Giant Plague Rat scurries with a wagging tail
+- Long monsters like hounds, krakens and the Rot King are no longer shrunk as much
+
 ## v1.31 | 3D monsters | Nov 1, 2026
 - 3D view (beta): almost every monster is now a real 3D model, 48 in total, across all 14 dungeons
 - Each kind moves its own way: skeletons and knights march, golems stomp, beasts and rats run on four legs, crawlers and crabs scuttle, serpents slither, angels and flies flap, wraiths and robed casters drift, books snap and orbs spin
