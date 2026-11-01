@@ -2,6 +2,33 @@
 
 New entries go at the TOP. The Discord bot posts the newest entry every time this file is pushed.
 
+## v1.32 | 3D raids | Nov 1, 2026
+- Raids are now in 3D too: the Hollow Court, Ash, Gilded Gallery, Sanctum and Abyssal Maw arenas are built in 3D with real stone pillars, and every raid boss and minion is a 3D model
+- Raid danger zones (cones, beams, arrow rain, star orbs, tentacle slams and the tide) now glow on the 3D arena floor so you can see where to step
+- Fixed monster legs glitching: many models were walking sideways inside their own bodies. Every monster now faces the way it walks and only its real legs move, so swords, capes and tails no longer get dragged around
+- The Hungry Tome now chomps properly instead of bending in half
+- Werewolves now run on two legs, and the Giant Plague Rat scurries with a wagging tail
+- Long monsters like hounds, krakens and the Rot King are no longer shrunk as much
+
+## v1.31 | 3D monsters | Nov 1, 2026
+- 3D view (beta): almost every monster is now a real 3D model, 48 in total, across all 14 dungeons
+- Each kind moves its own way: skeletons and knights march, golems stomp, beasts and rats run on four legs, crawlers and crabs scuttle, serpents slither, angels and flies flap, wraiths and robed casters drift, books snap and orbs spin
+- Monsters that appear in more than one dungeon take on that dungeon's colours
+- Still to come in 3D: spiders, the Mother of Rats, the Eclipse Reaper, the Angler Brute, and raids
+
+## v1.29 | Glowing jellyfish | Oct 31, 2026
+- 3D view (beta): the Jelly Wraiths of the Abyssal Trench are now glowing 3D jellyfish that float, pulse and trail their tentacles
+
+## v1.28 | First 3D monster | Oct 31, 2026
+- 3D view (beta): monsters are starting to become real 3D models. First up: the Rotting Abomination in Plaguehollow, which now runs, lunges at you and falls when it dies
+- More 3D monsters are coming
+
+## v1.27 | Real 3D dungeons | Oct 31, 2026
+- 3D view (beta) got a huge upgrade: dungeons are now built from real 3D stone walls, pillars, iron gates, banners, barrels, crates and chests, with glowing torches
+- Emberdeep floats over a sea of molten lava, and its pools are now lava under iron grates. Other dungeons get dark water
+- New glow and lighting effects in 3D: torches and lava light up the walls around them
+- 3D building pieces by Kay Lousberg (KayKit)
+
 ## v1.26 | 3D view (beta) | Oct 31, 2026
 - New: 3D view (beta). Turn it on in Settings → Battle view → 3D (beta). The dungeon is built in real 3D with walls, lighting and torches, and your hero and monsters stand in it. Raids still use the normal view for now
 - If 3D runs too slowly on your device, the game switches back to the normal view by itself
